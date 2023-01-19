@@ -9,7 +9,7 @@ reading: 10
 
 # Setup: Function Basics
 
-*Purpose*: Functions are our primary tool in carying out data analysis with the
+*Purpose*: Functions are our primary tool in carrying out data analysis with the
 `tidyverse`. It is unreasonable to expect yourself to memorize every function
 and all its details. To that end, we'll learn some basic _function literacy_ in
 R; how to inspect a function, look up its documentation, and find examples on a
@@ -22,7 +22,7 @@ function's use.
 ### __q1__ How do you find help on a function? Get help on the built-in `rnorm` function.
 
 ```{r rnorm-help, eval=FALSE}
-## Your code here
+?rnorm
 ```
 
 ### __q2__ How do you show the source code for a function?
@@ -32,11 +32,12 @@ function's use.
 ```
 
 ### __q3__ Using either the documentation or the source, determine the arguments for `rnorm`.
+number of observations, mean, standard deviation
 
 
 ### __q4__ Scroll to the bottom of the help for the `library()` function. How do you
 list all available packages?
-
+call library without any packages or help argument
 
 The __examples__ in the help documentation are often *extremely* helpful for
 learning how to use a function (or reminding yourself how its used)! Get used to

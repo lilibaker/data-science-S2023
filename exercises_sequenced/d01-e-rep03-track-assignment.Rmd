@@ -20,7 +20,7 @@ reading: 10
 
 This exercise introduces the *graphical* interface for git through RStudio. To
 use this interface, you'll need to click `Tools -> Global Options -> Git/SVN`.
-If *Git executable* shows (none), click *Browse* and selec tthe git executable
+If *Git executable* shows (none), click *Browse* and select the git executable
 installed on your system.
 
 - On Mac / Linux you can use `which git` from your command line
