@@ -44,6 +44,8 @@ library(tidyverse)
 to do? Do those simple checks on the diamonds dataset below.
 
 ```{r q0-task}
+?diamonds
+glimpse(diamonds)
 ```
 
 I'm going to walk you through a train of thought I had when studying the
@@ -70,7 +72,7 @@ diamonds %>%
 ```
 
 **Observations**:
-- Write your observations here!
+- no, the hypothesis was not correct. There are more ideal cuts than any other cuts
 
 ## Hypothesis 2
 
@@ -87,7 +89,7 @@ diamonds %>%
 ```
 
 **Observations**:
-- Write your observations here!
+- you cannot tell from the graph
 
 The following is a set of *boxplots*; the middle bar denotes the median, the
 boxes denote the *quartiles* (upper and lower "quarters" of the data), and the
@@ -102,7 +104,7 @@ diamonds %>%
 ```
 
 **Observations**:
-- Write your observations here!
+- ideal is actually the least expensive normally
 
 ## Unraveling Hypothesis 2
 
@@ -122,7 +124,7 @@ diamonds %>%
 ```
 
 **Observations**:
-- Write your observations here!
+- the larger carats are more populous in the fair cut,while ideal tends to have lower carats. this suggests that the cut is sacrificed in favor of the carat
 
 ## Footnotes
 
