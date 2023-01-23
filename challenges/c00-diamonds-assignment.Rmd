@@ -1,7 +1,7 @@
 ---
 title: "Getting Started: Diamonds"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2020-01-23
 output:
   github_document:
     toc: true
@@ -54,23 +54,26 @@ In this first stage, you will explore the `diamonds` dataset and document your o
 
 ```{r q1-task}
 ## TASK: Plot `price` vs `carat` below
-## Your code here!
+ggplot(diamonds) + 
+  geom_point(aes(x = carat, y = price))
 ```
 
 **Observations**:
 
-- (Write your observations here!)
+- price tends to increase as the carat increases
 
 ### __q2__ Create a visualization showing variables `carat`, `price`, and `cut` simultaneously. Experiment with which variable you assign to which aesthetic (`x`, `y`, etc.) to find an effective visual.
 
 ```{r q2-task}
 ## TASK: Plot `price`, `carat`, and `cut` below
-## Your code here!
+ggplot(diamonds) + 
+  geom_point(aes(x = carat, y = price, color= cut))
 ```
 
 **Observations**:
 
-- (Write your observations here!)
+- price tends to increase as carat increases
+- cut tends to determine the variation of price at each level of carat
 
 
 # Communication
