@@ -1,7 +1,7 @@
 ---
 title: "Michelson Speed-of-light Measurements"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2023-02-02
 output:
   github_document:
     toc: true
@@ -84,7 +84,13 @@ df_michelson %>% glimpse
 
 ```{r q1-task}
 ## TODO: Compute summaries
-df_q1 <- NA
+df_q1 <- df_michelson %>% 
+  group_by(Distinctness) %>% 
+  summarize(
+    n = n(),
+    MeanVelocity = mean(Velocity)
+  )
+
 df_q1 %>%
   arrange(desc(Distinctness)) %>%
   knitr::kable()
@@ -92,9 +98,9 @@ df_q1 %>%
 
 **Observations**:
 - Write your observations here!
-  - (Your response here)
+  - The values for the mean velocity across all distinctness values differ from the values Michelson reported. With the exception of the distinctness value of 1, all of the mean velocity values are less than those obtained by Michelson.
 - Why might your table differ from Michelson's?
-  - (Your response here)
+  - The values present in the table may differ from Michelson's as a result of the use of rounding in calculations throughout the process.
 
 The `Velocity` values in the dataset are the speed of light *in air*; Michelson
 introduced a couple of adjustments to estimate the speed of light in a vacuum.
@@ -107,7 +113,10 @@ observations in the dataset.
 
 ```{r q2-task}
 ## TODO: Adjust the data, assign to df_q2
-df_q2 <- NA
+df_q2 <- df_michelson %>% 
+  mutate(
+    VelocityVacuum = Velocity + 92
+  )
 
 df_q2
 ```
@@ -135,14 +144,16 @@ problems uncertainty includes some amount of human judgment.[2]
 
 ```{r q3-task}
 ## TODO: Compare Michelson's estimate and error against the true value
-## Your code here!
+LIGHTSPEED_VACUUM - LIGHTSPEED_MICHELSON
+LIGHTSPEED_PM
+
 ```
 
 **Observations**:
 - Is Michelson's estimate of the error (his uncertainty) greater or less than the true error?
-  - (Your response here)
+  - Michelson's estimate of the error is less than the true error as he believed that the true value of the speed-of-light would be at most 51 m/s away from his best estimate, while in reality the true value was 151.542 m/s away.
 - Make a quantitative comparison between Michelson's uncertainty and his error.
-  - (Your response here)
+  - Michelson's uncertainty was that the true value of the speed-of-light would lie either 51 m/s less or greater than his estimate. However, when determining the actual error by subtracting the speed-of-light by the true value, it is evident that Michelson underestimated his uncertainty as the actual error was 151.542 m/s, meaning that there is a 101.542 m/s discrepancy between his uncertainty and the actual error exhibited.
 
 The following plot shows all of Michelson's data as a [control chart](https://en.wikipedia.org/wiki/Control_chart); this sort of plot is common in manufacturing, where it is used to help determine if a manufacturing process is under [statistical control](https://en.wikipedia.org/wiki/Statistical_process_control). Each dot is one of Michelson's measurements, and the grey line connects the mean taken for each day. The same plot also shows simulated data using a probability model. We'll get into statistics later in the course; for now, let's focus on understanding what real and simulated data tend to look like.
 
