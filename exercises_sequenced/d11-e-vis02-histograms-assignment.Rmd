@@ -28,8 +28,12 @@ library(tidyverse)
 ### __q1__ Using the graphs generated in the chunks `q1-vis1` and `q1-vis2` below, answer:
 
 - Which `class` has the most vehicles?
+suv
 - Which `class` has the broadest distribution of `cty` values?
+subcompact
 - Which graph---`vis1` or `vis2`---best helps you answer each question?
+first one: first one
+second one: second one
 
 ```{r q1-vis1}
 ## NOTE: No need to modify
@@ -53,8 +57,9 @@ In the previous exercise, we learned how to *facet* a graph. Let's use that part
 
 ```{r q2-task}
 mpg %>%
-  ggplot(aes(cty, color = class)) +
-  geom_density()
+  ggplot(aes(cty)) +
+  geom_density() +
+  facet_wrap(~class, scales = "free_y")
 ```
 
 In the reading, we learned that the "most important thing" to keep in mind with `geom_histogram()` and `geom_freqpoly()` is to _explore different binwidths_. We'll explore this idea in the next question.
@@ -62,7 +67,7 @@ In the reading, we learned that the "most important thing" to keep in mind with 
 ### __q3__ Analyze the following graph; make sure to test different binwidths. What patterns do you see? Which patterns remain as you change the binwidth?
 
 ```{r q3-task}
-## TODO: Run this chunk; play with differnet bin widths
+## TODO: Run this chunk; play with different bin widths
 diamonds %>%
   filter(carat < 1.1) %>%
 
@@ -75,7 +80,7 @@ diamonds %>%
 ```
 
 **Observations**
-- Write your observations here!
+- The largest number of diamonds tend to fall on or above even 10-ths of a carat. - The peak near 0.5 is very broad, compared to the others. - The peak at 0.3 is most numerous
 
 <!-- include-exit-ticket -->
 # Exit Ticket
