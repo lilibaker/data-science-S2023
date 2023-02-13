@@ -1,7 +1,7 @@
 ---
 title: "Aluminum Data"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2023-02-13
 output:
   github_document:
     toc: true
@@ -45,7 +45,7 @@ library(tidyverse)
 # Loading and Wrangle
 <!-- -------------------------------------------------- -->
 
-The `readr` package in the Tidyverse contains functions to load data form many sources. The `read_csv()` function will help us load the data for this challenge.
+The `readr` package in the Tidyverse contains functions to load data from many sources. The `read_csv()` function will help us load the data for this challenge.
 
 ```{r load}
 ## NOTE: If you extracted all challenges to the same location,
@@ -66,7 +66,14 @@ Note that these data are not tidy! The data in this form are convenient for repo
 ```{r q1-task}
 ## TASK: Tidy `df_stang`
 df_stang_long <-
-  df_stang
+  df_stang %>% 
+   pivot_longer(
+    names_to = c(".value", "angle"),
+    names_sep = "_",
+    names_transform = list(angle = as.integer),
+    cols = starts_with("E") | starts_with("mu")
+  ) %>% 
+  filter(E >= 0)
 
 df_stang_long
 ```
@@ -79,7 +86,7 @@ Use the following tests to check your work.
 assertthat::assert_that(
               setequal(
                 df_stang_long %>% names,
-                c("thick", "alloy", "angle", "E", "nu")
+                c("thick", "alloy", "angle", "E", "mu")
               )
             )
 ## Dimensions
@@ -102,19 +109,20 @@ print("Very good!")
 
 ```{r q2-task}
 ##
+glimpse(df_stang_long)
 ```
 
 **Observations**:
 
 - Is there "one true value" for the material properties of Aluminum?
-  - (Your response here)
+  - No, the values for E and mu differ even when the thickness, alloy, and angle remain the same.
 - How many aluminum alloys are in this dataset? How do you know?
-  - (Your response here)
+  - There is only one aluminum alloy as every value in the alloy column is "al_24st".
 - What angles were tested?
-  - (Your response here)
+  - 0, 45, and 90 degrees
 - What thicknesses were tested?
-  - (Your response here)
-- (Write your own question here)
+  - 0.022, 0.032, 0.064, 0.081 m
+- Does the thickness have an impact on the Poisson's ratio of the alloy?
 
 ## Visualize
 <!-- ------------------------- -->
@@ -123,11 +131,14 @@ print("Very good!")
 
 ```{r q3-task}
 ## TASK: Investigate your question from q1 here
+df_stang_long %>% 
+  ggplot(aes(thick, mu)) + 
+  geom_point(aes(color = as_factor(angle)))
 ```
 
 **Observations**:
 
-- (Address your question from q1 here)
+- There appears to be a decrease in the Poisson ratio of the alloy as the thickness increases. It is important to note that there is a wide range within the values of mu for each thickness when it comes to the values associated with angles. Even when the same angle is compared, such as with 90 degrees at the thickness value of 0.022, there is a large difference between the observed mu values. Additionally, there does not appear to be a significant difference in the mu values for the thickness values, with the exception of 0.081. In that regard, further data across a wider range of thickness values is needed to state definitively whether there is a correlation.
 
 ### __q4__ Consider the following statement:
 
@@ -139,7 +150,7 @@ Note that the "amount of material" would vary with the thickness of a tested pla
 ## NOTE: No need to change; run this chunk
 df_stang_long %>%
 
-  ggplot(aes(nu, E, color = as_factor(thick))) +
+  ggplot(aes(mu, E, color = as_factor(thick))) +
   geom_point(size = 3) +
   theme_minimal()
 ```
@@ -147,7 +158,7 @@ df_stang_long %>%
 **Observations**:
 
 - Does this graph support or contradict the claim above?
-  - (Your response here)
+  - The graph contradicts the claim as when the thickness increases, the elasticity values tend to decrease. For the sample of data used in this analysis, this evidence is not necessarily conclusive as there are fluctuations within the thickness groups that do not always support the notion that elasticity is not an intensive property. For instance, for the Elasticity value of 10500, there are three different corresponding thickness values, which suggests that the elasticity may not be varying due to the thickness of the alloy.
 
 # References
 <!-- -------------------------------------------------- -->
