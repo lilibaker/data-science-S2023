@@ -9,7 +9,7 @@ reading: 40
 
 # Vis: Scatterplots and Layers
 
-*Purpose*: *Scatterplots* are a key tool for EDA. Scatteplots help us inspect the relationship between two variables. To enhance our scatterplots, we'll learn how to use *layers* in ggplot to add multiple pieces of information to our plots.
+*Purpose*: *Scatterplots* are a key tool for EDA. Scatterplots help us inspect the relationship between two variables. To enhance our scatterplots, we'll learn how to use *layers* in ggplot to add multiple pieces of information to our plots.
 
 *Reading*: [Scatterplots](https://rstudio.cloud/learn/primers/3.5)
 *Topics*: (All topics)
@@ -22,6 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r library}
 library(tidyverse)
+library(ggrepel)
 
 ```
 
@@ -92,11 +93,15 @@ looks.
 ## TODO: Add a "gam" and "lm" smooth to the following plot
 diamonds %>%
   ggplot(aes(carat, price)) +
-  geom_point()
+  geom_point() +
+  geom_smooth(aes(color = "gam"), method = "gam") +
+  geom_smooth(aes(color = "lm"), method = "lm")
+
 ```
 
 **Observations**:
 - Does the "gam" trend look linear?
+No
 
 ### __q2__ Add non-overlapping labels to the following scattterplot using the
 provided `df_annotate`.
@@ -118,7 +123,11 @@ df_annotate <-
 
 mpg %>%
   ggplot(aes(displ, hwy)) +
-  geom_point(aes(color = class))
+  geom_point(aes(color = class)) +
+  geom_label_repel(
+    data = df_annotate,
+    aes(label = class, fill = class)
+  )
 ```
 
 ### __q3__ Study the following scatterplot: Note whether city (`cty`) or highway
@@ -144,7 +153,9 @@ mpg %>%
 
 **Observations**:
 - Which tends to be larger? `cty` or `hwy` mileage?
+`hwy`
 - What is the trend of mileage with `displ`?
+as displacement increases, the mileage tends to decrease
 
 ## Aside: Scatterplot vs bar chart
 <!-- -------------------------------------------------- -->
