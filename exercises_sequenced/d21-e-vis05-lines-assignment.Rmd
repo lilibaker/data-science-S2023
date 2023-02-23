@@ -51,7 +51,9 @@ mpg %>%
 
 **Observations**:
 - What does a line plot assume about the data?
+assuming that there is only one line to be plotted -- i.e. the displ and hwy are not dependent on the model of the car
 - How does the `mpg` dataset violate this assumption?
+the displ and hwy values are dependent on the model of the car, so multiple lines should be plotted instead
 
 ### __q3__ The following graph shows both the raw data and a smoothed version. Describe the trends that you can see in the different curves.
 
@@ -66,7 +68,10 @@ economics %>%
 
 **Observations**:
 - What can you tell based on the `Raw` data?
+there is variation in the unemployment over time -- the trend does not simply increase; rather, there is a cyclical nature of increasing and decreasing
+
 - What can you tell based on the `Smoothed` data?
+There is an overall trend of an increase in employment over time
 
 <!-- include-exit-ticket -->
 # Exit Ticket
