@@ -1,7 +1,7 @@
 ---
 title: "Gapminder"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2023-02-16
 output:
   github_document:
     toc: true
@@ -56,11 +56,14 @@ dataset?
 
 ```{r q0-task}
 ## TASK: Do your "first checks" here!
+glimpse(gapminder)
+?gapminder
 ```
 
 **Observations**:
 
 - Write all variable names here
+country, continent, year, lifeExp, pop, gdpPercap
 
 ### __q1__ Determine the most and least recent years in the `gapminder` dataset.
 
@@ -68,8 +71,13 @@ dataset?
 
 ```{r q1-task}
 ## TASK: Find the largest and smallest values of `year` in `gapminder`
-year_max <- NA_real_
-year_min <- NA_real_
+year_max <- gapminder %>% 
+  pull(var = year) %>% 
+  max()
+
+year_min <- gapminder %>% 
+  pull(var = year) %>% 
+  min()
 ```
 
 Use the following test to check your work.
@@ -95,26 +103,38 @@ You may encounter difficulties in visualizing these data; if so document your ch
 
 ```{r q2-task}
 ## TASK: Create a visual of gdpPercap vs continent
+gapminder %>% 
+  filter(year == year_min, gdpPercap < 60000) %>% 
+  ggplot(aes(continent, gdpPercap)) +
+    geom_boxplot()
+    
 ```
 
 **Observations**:
 
-- Write your observations here
+- Oceania tends to have the highest gdp per capita as the entirety of the boxplot is greater than that of the other continents, excluding outliers. Additionally, Europe eppears to have the largest interquartile range, while Oceania has the smallest.
 
 **Difficulties & Approaches**:
 
-- Write your challenges and your approach to solving them
+- When trying to visualize the data through a simple boxplot, the visual was not informative as the outlier of Kuwait in Asia resulted in the inability to distinguish the boxplots of the continents as the majority of the gdp per capita data remained within the range of 0 to 15000 USD, while the outlier was 108392 USD. This difference in scale resulted in the boxplots appearing as a single line, making it difficult to analyze the data. To counteract this problem, I filtered the data to only display the data for gdpPercap values less than 60000 USD. While this did remove the outlier of Kuwait from the visual, it made it easier to examine the general trends of the data.
+- While there are other outliers in Europe and the Americas, these were not hidden as they did not affect the readability of the visual as the lie closer to the majority of the data.
 
 ### __q3__ You should have found *at least* three outliers in q2 (but possibly many more!). Identify those outliers (figure out which countries they are).
 
 ```{r q3-task}
 ## TASK: Identify the outliers from q2
+outliers <- gapminder %>% 
+  filter(
+    year == year_min,
+    gdpPercap > 12500
+  )
+outliers
 ```
 
 **Observations**:
 
 - Identify the outlier countries from q2
-  - (Your response here)
+  - Kuwait, Switzerland, United States
 
 *Hint*: For the next task, it's helpful to know a ggplot trick we'll learn in an upcoming exercise: You can use the `data` argument inside any `geom_*` to modify the data that will be plotted *by that geom only*. For instance, you can use this trick to filter a set of points to label:
 
@@ -138,11 +158,24 @@ gapminder %>%
 
 ```{r q4-task}
 ## TASK: Create a visual of gdpPercap vs continent
+gapminder %>% 
+  filter(year == year_min | year == year_max) %>% 
+  ggplot(aes(continent, gdpPercap)) +
+  geom_boxplot() +
+  geom_point(
+    data = . %>% filter(country %in% c("United States", "Kuwait", "Switzerland")),
+    mapping = aes(color = country),
+    size = 2
+  ) +
+    facet_grid(~ year)
+  
 ```
 
 **Observations**:
 
-- Write your observations here
+- Both the United States and Switzerland experienced a growth in GDP per capita from 1952 to 2007. Conversely, Kuwait experienced a much greater decrease in GDP per capita from 1952 to 2007. However, while Kuwait may have experienced a large decrease in GDP per capita, it still had a higehr GDP per capita than both Switzerland and the United States, even after their relatively smaller increases in GDP per capita.
+- Additionally, both Kuwait and Switzerland changed from being outliers to not in 2007, whilst the United States remained an outlier and moved farther away from the majority of the data in the Americas.
+- Overall, the interquartile range for GDP per capita in each continent increased, even if the median tended to stay around the same. That being said, the median tended to increase from 1952 to 2007, and the relative positions of each continent remained the same, with Oceania having the highest GDP per capita, and Africa having the least.
 
 # Your Own EDA
 <!-- -------------------------------------------------- -->
@@ -151,20 +184,60 @@ Now it's your turn! We just went through guided EDA considering the GDP per capi
 
 ### __q5__ Create *at least* three new figures below. With each figure, try to pose new questions about the data.
 
+Question: How did the life expectancy in each continent shift from 1952 to 2007?
+
 ```{r q5-task1}
-## TASK: Your first graph
+## lifeExp vs continent
+gapminder %>% 
+  filter(year == year_min | year == year_max) %>% 
+  ggplot(aes(continent, lifeExp)) +
+  geom_boxplot() +
+  geom_point(
+    data = . %>% filter(country %in% c("Reunion", "Turkey", "Haiti", "Afghanistan")),
+    mapping = aes(color = country),
+    size = 2
+  ) +
+    facet_grid(~ year)
 ```
 
-- (Your notes and observations here)
+- Generally, life expectancy increased from 1952 to 2007 for every continent. However, continents that initially had a larger spread of life expectancy -- such as the Americas and Asia -- experienced a decrease in the spread of life expectancy, whilst continents that had a smaller spread -- such as Africa and Oceania -- experienced an increase in the spread of life expectancy.
+- In terms of outliers, Haiti and Afghanistan became outliers in their continents by having significantly lower life expectancies in 2007, even if their life expectancy had increased from 1952 to 2007. On the other hand, Reunion and Turkey started off as outliers in their respective continents before lying just on the outer edges of their continent extrema in 2007.
+
+How did the dot-com bubble burst of 2000 affect the GDP per capita of continents?
 
 ```{r q5-task2}
-## TASK: Your second graph
+## gdpPercap 1992 vs 2002
+gapminder %>% 
+  filter(year == 1997 | year == 2002) %>% 
+  ggplot(aes(continent, gdpPercap)) +
+  geom_boxplot() +
+  geom_point(
+    data = . %>% filter(country %in% c("United States")),
+    mapping = aes(color = country),
+    size = 2
+  ) +
+    facet_grid(~ year)
+
 ```
 
-- (Your notes and observations here)
+- From 2000-2002, the dot-com bubble crashed, resulting in a decrease in 
+
+
+Did the country with the largest population in each continent change from 1952 to 2007?
 
 ```{r q5-task3}
-## TASK: Your third graph
+## population outliers in 1952 vs 2007
+gapminder %>% 
+  filter(year == year_max | year == year_min) %>% 
+  ggplot(aes(continent, pop)) +
+  geom_boxplot() +
+  geom_point(
+    data = . %>% filter(country %in% c("China", "United States", "Nigeria", "Germany")),
+    mapping = aes(color = country),
+    size = 2
+  ) +
+  facet_grid(~ year)
 ```
 
-- (Your notes and observations here)
+- Each of the countries with the largest population in each continent in 1952 remained the same in 2007. The largest increase in population occurred in China, whilst Germany's population increased the least among the population outliers highlighted. It is important to note that as Oceania consists of just New Zealand and Australia in this dataset, there are not enough data points for outliers.
+- Overall, Asia experienced the largest increase in interquartile range, as well as the largest growth in the outliers, which were China, India, Indonesia, and Pakistan.
