@@ -104,20 +104,20 @@ You may encounter difficulties in visualizing these data; if so document your ch
 ```{r q2-task}
 ## TASK: Create a visual of gdpPercap vs continent
 gapminder %>% 
-  filter(year == year_min, gdpPercap < 60000) %>% 
+  filter(year == year_min) %>% 
   ggplot(aes(continent, gdpPercap)) +
-    geom_boxplot()
+    geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
     
 ```
 
 **Observations**:
 
-- Oceania tends to have the highest gdp per capita as the entirety of the boxplot is greater than that of the other continents, excluding outliers. Additionally, Europe eppears to have the largest interquartile range, while Oceania has the smallest.
+- Oceania tends to have the highest gdp per capita as the entirety of the boxplot is greater than that of the other continents, excluding outliers. Additionally, Europe appears to have the largest interquartile range, while Oceania has the smallest.
 
 **Difficulties & Approaches**:
 
-- When trying to visualize the data through a simple boxplot, the visual was not informative as the outlier of Kuwait in Asia resulted in the inability to distinguish the boxplots of the continents as the majority of the gdp per capita data remained within the range of 0 to 15000 USD, while the outlier was 108392 USD. This difference in scale resulted in the boxplots appearing as a single line, making it difficult to analyze the data. To counteract this problem, I filtered the data to only display the data for gdpPercap values less than 60000 USD. While this did remove the outlier of Kuwait from the visual, it made it easier to examine the general trends of the data.
-- While there are other outliers in Europe and the Americas, these were not hidden as they did not affect the readability of the visual as the lie closer to the majority of the data.
+- When trying to visualize the data through a simple boxplot, the visual was not very informative as the outlier of Kuwait in Asia resulted in the inability to distinguish the boxplots of the continents as the majority of the gdp per capita data remained within the range of 0 to 15000 USD, while the outlier was 108392 USD. This difference in scale resulted in the boxplots appearing as a single line, making it difficult to analyze the data. To counteract this problem, I decided to use a violin plot, which made it easier to see the density of data, as well as the quartiles, despite the scaling issue resulting from the outlier of Kuwait.
+
 
 ### __q3__ You should have found *at least* three outliers in q2 (but possibly many more!). Identify those outliers (figure out which countries they are).
 
@@ -197,33 +197,30 @@ gapminder %>%
     mapping = aes(color = country),
     size = 2
   ) +
-    facet_grid(~ year)
+    facet_grid(~ year) +
+  labs(title = "Life Expectancy in 1952 and 2007")
 ```
 
 - Generally, life expectancy increased from 1952 to 2007 for every continent. However, continents that initially had a larger spread of life expectancy -- such as the Americas and Asia -- experienced a decrease in the spread of life expectancy, whilst continents that had a smaller spread -- such as Africa and Oceania -- experienced an increase in the spread of life expectancy.
 - In terms of outliers, Haiti and Afghanistan became outliers in their continents by having significantly lower life expectancies in 2007, even if their life expectancy had increased from 1952 to 2007. On the other hand, Reunion and Turkey started off as outliers in their respective continents before lying just on the outer edges of their continent extrema in 2007.
 
-How did the dot-com bubble burst of 2000 affect the GDP per capita of continents?
 
+Question: Is there an observable relationship between GDP per capita and life expectancy?
 ```{r q5-task2}
-## gdpPercap 1992 vs 2002
+## gdpPercap vs lifeExp
 gapminder %>% 
-  filter(year == 1997 | year == 2002) %>% 
-  ggplot(aes(continent, gdpPercap)) +
-  geom_boxplot() +
-  geom_point(
-    data = . %>% filter(country %in% c("United States")),
-    mapping = aes(color = country),
-    size = 2
-  ) +
-    facet_grid(~ year)
+  filter(year == year_min | year == year_max) %>% 
+  ggplot(aes(lifeExp, gdpPercap)) +
+  geom_point(aes(color = continent)) +
+    facet_grid(~ year) +
+  labs(title = "GDP Per Capita vs Life Expectancy")
 
 ```
 
-- From 2000-2002, the dot-com bubble crashed, resulting in a decrease in 
+- Between 1957 and 2007, there was an overall increase in life expectancy that was not dependent on the continent nor the GDP per capita, as evidenced by the overall shift from around 30-74 as the life expectancy range in 1957 to 40-83 in 2007. While in both years countries with higher GDP per capita had a higher life expectancy, the amount of countries with higher GDPs and higher life expectancies is much greater. That being said, this relationship is limited for numerous reasons. As seen in 2007, there are several countries with higher GDPs that also have relatively low life expectancies between 50-60 years. Moreover, the range in GDP exhibited in 2007 at the higher end of life expectancy (70-80) suggests that other factors are involved. Additionally, given the fact that life expectancy is a limited variable to consider due to natural constraints, there is not a wide enough range to be able to determine if there is in fact a relationship as many of the countries have similar life expectancy values.
 
 
-Did the country with the largest population in each continent change from 1952 to 2007?
+Question: Did the country with the largest population in each continent change from 1952 to 2007?
 
 ```{r q5-task3}
 ## population outliers in 1952 vs 2007
@@ -236,7 +233,8 @@ gapminder %>%
     mapping = aes(color = country),
     size = 2
   ) +
-  facet_grid(~ year)
+  facet_grid(~ year) +
+  labs(title = "Population Outliers in 1952 and 2007")
 ```
 
 - Each of the countries with the largest population in each continent in 1952 remained the same in 2007. The largest increase in population occurred in China, whilst Germany's population increased the least among the population outliers highlighted. It is important to note that as Oceania consists of just New Zealand and Australia in this dataset, there are not enough data points for outliers.
