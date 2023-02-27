@@ -140,8 +140,7 @@ glimpse(gapminder)
 
 **Observations**:
 
-- Write all variable names here country, continent, year, lifeExp, pop,
-  gdpPercap
+- Variables: country, continent, year, lifeExp, pop, gdpPercap
 
 ### **q1** Determine the most and least recent years in the `gapminder` dataset.
 
@@ -238,24 +237,41 @@ gapminder %>%
 ``` r
 ## TASK: Identify the outliers from q2
 outliers <- gapminder %>% 
+  group_by(continent) %>% 
+  filter(year == year_min) %>% 
+  mutate(
+    q1 = quantile(gdpPercap, probs = 0.25),
+    q3 = quantile(gdpPercap, probs = 0.75),
+    iqr = IQR(gdpPercap)
+  ) %>% 
+  group_by(country) %>% 
   filter(
-    year == year_min,
-    gdpPercap > 12500
+    (gdpPercap > q3 + 1.5 * iqr) | (gdpPercap < q1 - 1.5 * iqr)
   )
+
+
 outliers
 ```
 
-    ## # A tibble: 3 × 6
-    ##   country       continent  year lifeExp       pop gdpPercap
-    ##   <fct>         <fct>     <int>   <dbl>     <int>     <dbl>
-    ## 1 Kuwait        Asia       1952    55.6    160000   108382.
-    ## 2 Switzerland   Europe     1952    69.6   4815000    14734.
-    ## 3 United States Americas   1952    68.4 157553000    13990.
+    ## # A tibble: 9 × 9
+    ## # Groups:   country [9]
+    ##   country       continent  year lifeExp       pop gdpPercap    q1    q3   iqr
+    ##   <fct>         <fct>     <int>   <dbl>     <int>     <dbl> <dbl> <dbl> <dbl>
+    ## 1 Angola        Africa     1952    30.0   4232095     3521.  535. 1455.  920.
+    ## 2 Bahrain       Asia       1952    50.9    120447     9867.  750. 3035. 2286.
+    ## 3 Canada        Americas   1952    68.8  14785584    11367. 2428. 3940. 1512.
+    ## 4 Gabon         Africa     1952    37.0    420702     4293.  535. 1455.  920.
+    ## 5 Kuwait        Asia       1952    55.6    160000   108382.  750. 3035. 2286.
+    ## 6 South Africa  Africa     1952    45.0  14264935     4725.  535. 1455.  920.
+    ## 7 Switzerland   Europe     1952    69.6   4815000    14734. 3241. 7237. 3996.
+    ## 8 United States Americas   1952    68.4 157553000    13990. 2428. 3940. 1512.
+    ## 9 Venezuela     Americas   1952    55.1   5439568     7690. 2428. 3940. 1512.
 
 **Observations**:
 
 - Identify the outlier countries from q2
-  - Kuwait, Switzerland, United States
+  - Angola, Bahrain, Canada, Gabon, Kuwait, South Africa, Switzerland,
+    United States, Venezuela
 
 *Hint*: For the next task, it’s helpful to know a ggplot trick we’ll
 learn in an upcoming exercise: You can use the `data` argument inside
@@ -291,7 +307,7 @@ gapminder %>%
   ggplot(aes(continent, gdpPercap)) +
   geom_boxplot() +
   geom_point(
-    data = . %>% filter(country %in% c("United States", "Kuwait", "Switzerland")),
+    data = . %>% filter(country %in% c("Angola", "Bahrain", "Canada", "Gabon", "Kuwait", "South Africa", "Switzerland", "United States", "Venezuela")),
     mapping = aes(color = country),
     size = 2
   ) +
@@ -302,21 +318,21 @@ gapminder %>%
 
 **Observations**:
 
-- Both the United States and Switzerland experienced a growth in GDP per
-  capita from 1952 to 2007. Conversely, Kuwait experienced a much
-  greater decrease in GDP per capita from 1952 to 2007. However, while
-  Kuwait may have experienced a large decrease in GDP per capita, it
-  still had a higehr GDP per capita than both Switzerland and the United
-  States, even after their relatively smaller increases in GDP per
-  capita.
-- Additionally, both Kuwait and Switzerland changed from being outliers
-  to not in 2007, whilst the United States remained an outlier and moved
-  farther away from the majority of the data in the Americas.
 - Overall, the interquartile range for GDP per capita in each continent
   increased, even if the median tended to stay around the same. That
   being said, the median tended to increase from 1952 to 2007, and the
   relative positions of each continent remained the same, with Oceania
   having the highest GDP per capita, and Africa having the least.
+- In terms of outliers, Angola, Venezuela, Bahrain, Kuwait, and
+  Switzerland switched from being outliers in 1957 to not in 2007. With
+  the exception of Venezuela, each of these nations still had GDP per
+  capita values greater than the third quartile.
+- Regrading the economic growth and decline of the outliers, the United
+  States and Canada experienced the largest increase in GDP per capita
+  between 1952 and 2007, whilst Kuwait experienced the largest decrease.
+  That being said, despite the large decrease in Kuwait’s GDP per
+  capita, it still had the highest GDP per capita amongst the outliers
+  (excluding the countries in Europe not classed as outliers).
 
 # Your Own EDA
 
