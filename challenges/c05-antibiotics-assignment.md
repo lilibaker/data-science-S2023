@@ -256,7 +256,6 @@ df_antibiotics %>%
   ) %>% 
   mutate(MIC = as.double(MIC)) %>% 
   
-  group_by(bacteria) %>% 
   ggplot(aes(antibiotic, MIC)) +
   geom_boxplot() +
   scale_y_log10() +
@@ -284,12 +283,11 @@ df_antibiotics %>%
   ) %>% 
   mutate(MIC = as.double(MIC)) %>% 
   
-  group_by(antibiotic) %>% 
-  ggplot(aes(gram, MIC)) +
-  geom_point(aes(color = bacteria)) +
-  scale_y_log10() +
+  ggplot(aes(bacteria, MIC, color = gram)) +
+  geom_point() +
   facet_wrap(~ antibiotic) +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+  scale_y_log10() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1, size = 5))
 ```
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.5-1.png)<!-- -->
