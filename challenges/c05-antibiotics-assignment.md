@@ -165,7 +165,10 @@ df_antibiotics %>%
   geom_point(aes(color = bacteria)) +
   scale_y_log10() +
   facet_wrap(~ gram) +
-  theme(legend.key.size = unit(0.3, 'cm'))
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+    legend.key.size = unit(0.3, 'cm')
+  )
 ```
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.1-1.png)<!-- -->
@@ -316,10 +319,19 @@ opportunity to think about why this is.**
 > How do the three antibiotics vary in their effectiveness against
 > bacteria of different genera and Gram stain?
 
-*Observations* - What is your response to the question above? - (Write
-your response here) - Which of your visuals above (1 through 5) is
-**most effective** at helping to answer this question? - (Write your
-response here) - Why? - (Write your response here)
+*Observations* - What is your response to the question above? - With the
+exception of penicillin, the MIC values amongst negative grams for the
+antibiotics tend to lie closer to each other. On the other hand, the MIC
+values for the positive grams differs more for each bacteria. However,
+in the case of penicillin, the MIC values for negative grams differ much
+more than those of the positive strains. - Which of your visuals above
+(1 through 5) is **most effective** at helping to answer this
+question? - visual 4 - Why? - The boxplot enables the isolation of the
+effectiveness of the antibiotics at the gram level, facilitating the
+comparison across grams. The addition of points for each of the bacteria
+demonstrates how these differences are evident at the bacteria level. In
+that regard, the combination of the boxplot and the individual points
+enables the comparison at both the gram and bacteria level.
 
 #### Guiding Question 2
 
