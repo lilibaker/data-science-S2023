@@ -41,13 +41,18 @@ diamonds %>%
 **Observations**:
 
 - How are the factor levels ordered?
+order of increasing quality of cut
 - What---if any---relation does the order of the factor levels have to trends in the data?
+levels are a measure of quality, so as they increase, so should the price
 
 ### __q2__ Determine the levels for the `continent` variable in the `gapminder` dataset. Note the *order* of the levels.
 
 ```{r q2-task}
 ## TASK: Determine the levels of the variable
 ## TODO: Your code here!
+gapminder %>% 
+  pull(continent) %>% 
+  levels()
 
 ## TASK: Determine what order the factors are listed in.
 ```
@@ -55,8 +60,9 @@ diamonds %>%
 **Observations**:
 
 - How are the factor levels ordered?
+listed in alphabetic order
 - What---if any---relation does the order of the factor levels have to trends in the data?
-
+N/A
 
 The [forcats](https://forcats.tidyverse.org/) package has tools for working with
 factors. For instance, we can assign manual factor levels with the function
@@ -68,12 +74,21 @@ factors. For instance, we can assign manual factor levels with the function
 Copy your code from q2 and introduce a mutate using `fct_relevel()` to reorder `continent`. Choose which levels to reorder and what order in which to put them. Note how the resulting order is changed when you call `levels()` at the end of the pipe.
 
 ```{r q3-task}
-
+gapminder %>%
+  mutate(
+    continent = fct_relevel(
+      continent,
+      "Europe"
+    )
+  ) %>%
+  pull(continent) %>%
+  levels()
 ```
 
 **Observations**:
 
 - How are the factor levels (re)ordered?
+Europe is now first, everything else shifted to the right
 
 ## Visual Tricks
 <!-- -------------------------------------------------- -->
@@ -99,6 +114,7 @@ another variable `x`. This will "match" the order between the two.
 ## TASK: Modify the following code to sort the factor `manufacturer` based on
 ## `cty`.
 mpg %>%
+    mutate(manufacturer = fct_reorder(manufacturer, cty)) %>%
 
   ggplot(aes(manufacturer, cty)) +
   geom_boxplot() +
@@ -109,8 +125,10 @@ mpg %>%
 
 *Before*
 - Document your observations before sorting.
+no apparent trend in data
 *Sorted*
 - Modify the code to sort `manufacturer`, then note any additional observations you make.
+clear increasing values and
 
 The function `fct_reorder2(f, x, y)` allows us to sort on *two* variables; this
 is most useful when making line plots.
@@ -123,6 +141,8 @@ Use `fct_reorder2()` to sort `country` to match the order of `x = year, y = pop`
 ## TASK: Modify the following code to sort the factor `country` based on `year`
 ## and `pop`.
 gapminder %>%
+  mutate(country = fct_reorder2(country, year, pop)) %>%
+
   filter(dense_rank(country) <= 7) %>%
 
   ggplot(aes(year, pop, color = country)) +
@@ -133,6 +153,7 @@ gapminder %>%
 **Observations**:
 
 - How does `fct_reorder2()` sort factors?
+The factors are sorted such that the rightmost points on the lines are vertically ordered the same as the legend.
 
 This *small, simple trick* is extremely helpful for creating easily-readable
 line graphs.
