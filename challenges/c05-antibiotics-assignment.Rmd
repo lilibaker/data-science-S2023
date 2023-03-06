@@ -1,7 +1,7 @@
 ---
 title: "Antibiotics"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2023-03-02
 output:
   github_document
 ---
@@ -74,7 +74,18 @@ For all five of the visuals, you must show information on *all 16 bacteria*. For
 In this visual you must show *all three* effectiveness values for *all 16 bacteria*. You must also show whether or not each bacterium is Gram positive or negative.
 
 ```{r q1.1}
-# WRITE YOUR CODE HERE
+df_antibiotics %>% 
+  pivot_longer(
+    names_to = "antibiotic",
+    values_to = "MIC",
+    cols = c(`penicillin`, `streptomycin`, `neomycin`)
+  ) %>% 
+  mutate(MIC = as.double(MIC)) %>% 
+  
+  ggplot(aes(antibiotic, MIC)) +
+  geom_point(aes(color = bacteria)) +
+  facet_wrap(~ gram) +
+  theme(legend.key.size = unit(0.3, 'cm'))
 ```
 
 #### Visual 2 (All variables)
@@ -84,7 +95,24 @@ In this visual you must show *all three* effectiveness values for *all 16 bacter
 Note that your visual must be *qualitatively different* from *all* of your other visuals.
 
 ```{r q1.2}
-# WRITE YOUR CODE HERE
+df_antibiotics %>% 
+  pivot_longer(
+    names_to = "antibiotic",
+    values_to = "MIC",
+    cols = c(`penicillin`, `streptomycin`, `neomycin`)
+  ) %>% 
+  mutate(MIC = as.double(MIC)) %>% 
+  
+  ggplot(aes(antibiotic, MIC)) +
+  geom_col(aes(fill = gram)) +
+  facet_wrap(~ bacteria) +
+  scale_y_log10() +
+  theme(
+    legend.key.size = unit(0.3, 'cm'),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+    plot.title = element_text(size = 2),
+    strip.text = element_text(size = 6.5)
+  )
 ```
 
 #### Visual 3 (Some variables)
@@ -94,7 +122,29 @@ In this visual you may show a *subset* of the variables (`penicillin`, `streptom
 Note that your visual must be *qualitatively different* from *all* of your other visuals.
 
 ```{r q1.3}
-# WRITE YOUR CODE HERE
+df_antibiotics %>% 
+  pivot_longer(
+    names_to = "antibiotic",
+    values_to = "MIC",
+    cols = c(`penicillin`, `streptomycin`, `neomycin`)
+  ) %>% 
+  mutate(MIC = as.double(MIC)) %>% 
+  
+  ggplot(aes(antibiotic, MIC)) +
+  geom_point() +
+  geom_point(
+    data = . %>% filter(startsWith(bacteria, 'Streptococcus')),
+    mapping = aes(color = bacteria),
+    size = 2
+  ) +
+  geom_point(
+    data = . %>% filter(bacteria == 'Diplococcus pneumonia'),
+    mapping = aes(shape = bacteria, color = bacteria),
+    size = 3
+  ) +
+  scale_y_log10() +
+  facet_wrap(~ gram) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
 #### Visual 4 (Some variables)
@@ -104,7 +154,20 @@ In this visual you may show a *subset* of the variables (`penicillin`, `streptom
 Note that your visual must be *qualitatively different* from *all* of your other visuals.
 
 ```{r q1.4}
-# WRITE YOUR CODE HERE
+df_antibiotics %>% 
+  pivot_longer(
+    names_to = "antibiotic",
+    values_to = "MIC",
+    cols = c(`penicillin`, `streptomycin`, `neomycin`)
+  ) %>% 
+  mutate(MIC = as.double(MIC)) %>% 
+  
+  group_by(bacteria) %>% 
+  ggplot(aes(antibiotic, MIC)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  facet_wrap(~ gram) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
 #### Visual 5 (Some variables)
@@ -114,7 +177,21 @@ In this visual you may show a *subset* of the variables (`penicillin`, `streptom
 Note that your visual must be *qualitatively different* from *all* of your other visuals.
 
 ```{r q1.5}
-# WRITE YOUR CODE HERE
+df_antibiotics %>% 
+  pivot_longer(
+    names_to = "antibiotic",
+    values_to = "MIC",
+    cols = c(`penicillin`, `streptomycin`, `neomycin`)
+  ) %>% 
+  mutate(MIC = as.double(MIC)) %>% 
+  
+  group_by(antibiotic) %>% 
+  ggplot(aes(gram, MIC)) +
+  geom_point(aes(color = bacteria)) +
+  scale_y_log10() +
+  facet_wrap(~ antibiotic) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
 ```
 
 ### __q2__ Assess your visuals
