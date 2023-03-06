@@ -84,6 +84,7 @@ df_antibiotics %>%
   
   ggplot(aes(antibiotic, MIC)) +
   geom_point(aes(color = bacteria)) +
+  scale_y_log10() +
   facet_wrap(~ gram) +
   theme(legend.key.size = unit(0.3, 'cm'))
 ```
