@@ -259,9 +259,13 @@ df_antibiotics %>%
   
   ggplot(aes(antibiotic, MIC)) +
   geom_boxplot() +
+  geom_point(aes(color = bacteria)) +
   scale_y_log10() +
   facet_wrap(~ gram) +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+    legend.key.size = unit(0.3, 'cm')
+  )
 ```
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.4-1.png)<!-- -->
@@ -326,10 +330,24 @@ and in 1984 *Streptococcus fecalis* was renamed *Enterococcus fecalis*
 > Why was *Diplococcus pneumoniae* was renamed *Streptococcus
 > pneumoniae*?
 
-*Observations* - What is your response to the question above? - (Write
-your response here) - Which of your visuals above (1 through 5) is
-**most effective** at helping to answer this question? - (Write your
-response here) - Why? - (Write your response here)
+*Observations* - What is your response to the question above? -
+*Diplococcus pneumoniae* exhibits similar MIC values to the
+*Streptococcus* bacteria, with the exception of *Streptococcus fecalis*.
+Specifically, for neomycin, each of the bacteria exhibit MIC values
+around 1e+01. For penicillin, the bacteria exhibit MIC values around
+1e-02. Finally, for streptomycin, the bacteria exhibit MIC values around
+1e+01. Consequently, the similarities between the MIC values for
+*Diplococcus pneumoniae* and the *Streptococcus* bacteria indicate that
+*Diplococcus pneumoniae* should actually fall within the *Streptococcus*
+genus. - Which of your visuals above (1 through 5) is **most effective**
+at helping to answer this question? - visual 2 - Why? - Visual 2 enables
+a quick comparison of how the bacteria are affected by the antibiotics.
+The individual graphs for each bacteria make it easier to compare across
+bacteria as the graphs are not cluttered and the axes contain the same
+ranges. Thus, it is easy to see how *Diplococcus pneumoniae* and the
+*Streptococcus* bacteria individually react to the antibiotics and
+perform a comparison, whilst also comparing how this differs from the
+other included bacteria.
 
 # References
 
