@@ -106,14 +106,23 @@ less than the threshold `price_threshold`.
 ```{r q1-task}
 ## TASK: Compute a confidence interval on the mean, use to answer the question
 ## above
-df_sample
+df_sample %>% 
+  summarize(
+    price_mean = mean(price),
+    price_sd = sd(price),
+    price_lo = price_mean - 1.96 * price_sd / sqrt(n()),
+    price_hi = price_mean + 1.96 * price_sd / sqrt(n())
+  ) %>%
+  select(price_lo, price_hi)
 price_threshold
 ```
 
 **Observations**:
 
 - Can you reject the null hypothesis **H_0**?
+based on the confidence interval, we cannot reject the null hypothesis
 - How does this affect your decision?
+take default action of not buying the diamonds
 
 ## Different Scenario, Different Hypotheses
 <!-- -------------------------------------------------- -->
@@ -159,12 +168,27 @@ of cases in a sample with variable `X` equal to `"value"`. You'll need to figure
 ```{r q2-task}
 ## TASK: Estimate a confidence interval for the proportion of high-cut diamonds
 ## in the population. Look to `e-stat09-bootstrap` for starter code.
+set.seed(101)
+
+fit_fun <- function(split) {
+  analysis(split) %>%
+    summarize(estimate = mean((cut == "Premium") | (cut == "Ideal"))) %>%
+    mutate(term = "proportion_high")
+}
+
+df_resample_total_price <-
+  bootstraps(df_sample, times = 1000) %>%
+  mutate(estimates = map(splits, fit_fun))
+
+int_pctl(df_resample_total_price, estimates, alpha = 0.01)
 ```
 
 **Observations**:
 
 - Can you reject the null hypothesis **H_0**?
+Yes, the lower estimate is greater than 50% so you can reject the null hypothesis
 - How does this affect your decision?
+buy the diamonds!
 
 ## Closing Thoughts
 <!-- -------------------------------------------------- -->
@@ -179,15 +203,20 @@ null hypothesis?
 
 ```{r q3-task}
 ## TASK: Compute the population mean of diamond price
-
+## TASK: Compute the population mean of diamond price
+df_population %>%
+  summarize(price = mean(price))
 price_threshold
 ```
 
 **Observations**:
 
 - Did you reject the null hypothesis in q1?
+did not reject the null hypothesis
 - What is the actual truth?
+the mean price is less than $1700
 - What decision did you make?
+did not buy the diamonds
 
 When I did q1, I **did not reject the null**. Note the weird wording there:
 **did not reject the null**, rathern than "accepted the null". In this
