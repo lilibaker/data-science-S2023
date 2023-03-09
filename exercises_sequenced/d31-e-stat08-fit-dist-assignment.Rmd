@@ -37,7 +37,7 @@ Use the namespace `::` operator to use the correct `select()` function.
 
 ```{r q0-task}
 diamonds %>%
-  select(carat, cut) %>%
+  dplyr::select(carat, cut) %>%
   glimpse()
 ```
 
@@ -73,14 +73,14 @@ df_est_norm
 *Notes*:
 
 - `fitdistr()` takes a *vector*; I use the function `pull(x)` to pull the vector `x` out of the dataframe.
-- `fitdistr()` returns a messy output; the function `broom::tidy()` automagically cleans up the output and provides a tibble.
+- `fitdistr()` returns a messy output; the function `broom::tidy()` automatically cleans up the output and provides a tibble.
 
 ### __q1__ Compute the sample mean and standard deviation of `x` in `df_data_norm`. Compare these values to those you computed with `fitdistr()`.
 
 ```{r q1-task}
 ## TASK: Compute the sample mean and sd of `df_data_norm %>% pull(x)`
-mean_est <- NA_real_
-sd_est <- NA_real_
+mean_est <- df_data_norm %>% pull(x) %>% mean()
+sd_est <- df_data_norm %>% pull(x) %>% sd()
 mean_est
 sd_est
 ```
@@ -88,6 +88,7 @@ sd_est
 **Observations**:
 
 - How do the values in `df_est_norm` compare with `mean_est` and `sd_est`?
+they are the same!
 
 Estimating parameters for a normal distribution is easy because it is parameterized in terms of the mean and standard deviation. The advantage of using `fitdistr()` is that it will allow us to work with a much wider selection of distribution models.
 
@@ -101,7 +102,11 @@ set.seed(101)
 df_data_weibull <- tibble(y = rweibull(50, shape = 2, scale = 4))
 
 ## TASK: Use the `fitdistr()` function to estimate parameters
-df_q2 <- NA
+df_q2 <- 
+  df_data_weibull %>%
+  pull(y) %>%
+  fitdistr(densfun = "weibull") %>%
+  tidy()
 df_q2
 ```
 
@@ -116,7 +121,17 @@ Once we've fit a distribution, we can use the estimated parameters to approximat
 pr_true <- pweibull(q = 2, shape = 2, scale = 4)
 
 ## TASK: Extract the parameter estimates from df_q2 and estimate Pr[Y <= 2]
-pr_est <- NA_real_
+set.seed(101)
+shape_est <-
+  df_q2 %>%
+  filter(term == "shape") %>%
+  pull(estimate)
+scale_est <-
+  df_q2 %>%
+  filter(term == "scale") %>%
+  pull(estimate)
+
+pr_est <- pweibull(q = 2, shape = shape_est, scale = scale_est)
 
 pr_true
 pr_est
