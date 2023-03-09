@@ -43,7 +43,7 @@ economics %>%
   facet_wrap(~variable, scales = "free_y")
 ```
 
-The "multiples" are the different panels; above we've separated the different variables into their own panel. This allows us to compare trends simply by lookin across at different panels. The faceting above works well for comparing trends: It's clear by inspection whether the various trends are increasing, decreasing, etc.
+The "multiples" are the different panels; above we've separated the different variables into their own panel. This allows us to compare trends simply by looking across at different panels. The faceting above works well for comparing trends: It's clear by inspection whether the various trends are increasing, decreasing, etc.
 
 The next example with the `mpg` data is not so effective:
 
@@ -82,7 +82,12 @@ The presence of these "ghost" points provides more context; they facilitate the 
 ## comparison.
 diamonds %>%
   ggplot(aes(carat, price)) +
-  geom_point()
+  geom_point(
+    data = . %>% select(-cut),
+    color = "grey80"
+  ) +
+  geom_point() +
+  facet_wrap(~cut)
 ```
 
 
@@ -126,6 +131,20 @@ as_tibble(iris) %>%
     names_to = "part",
     values_to = "length",
     cols = -Species
+  )
+
+as_tibble(iris) %>%
+  pivot_longer(
+    names_to = "part",
+    values_to = "length",
+    cols = -Species
+  ) %>%
+
+  ggplot(aes(length, Species)) +
+  geom_point() +
+  facet_grid(part~., scale = "free_y", space = "free") +
+  theme(
+    strip.text.y = element_text(angle = 0)
   )
 ```
 
