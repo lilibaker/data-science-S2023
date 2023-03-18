@@ -1,7 +1,7 @@
 ---
 title: "COVID-19"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2023-03-10
 output:
   github_document:
     toc: true
@@ -36,7 +36,7 @@ All the deliverables stated in the rubrics above are due **at midnight** before 
 
 ```{r setup}
 library(tidyverse)
-
+library(readxl) # For reading Excel sheets
 ```
 
 *Background*: [COVID-19](https://en.wikipedia.org/wiki/Coronavirus_disease_2019) is the disease caused by the virus SARS-CoV-2. In 2020 it became a global pandemic, leading to huge loss of life and tremendous disruption to society. The New York Times (as of writing) publishes up-to-date data on the progression of the pandemic across the United States---we will study these data in this challenge.
@@ -78,7 +78,19 @@ That's the high-level view; now let's dig into the details.
 
 ```{r q1-task}
 ## TASK: Load the census bureau data with the following tibble name.
-df_pop <- NA
+
+df_pop <- read.csv(
+    "./data/ACSDT5Y2018.B01003-Data.csv",
+    skip = 1,
+  ) %>%
+  select(-c(4, 6, 7)) %>%
+  rename(
+    `id` = Geography,
+    `Geographic Area Name` = Geographic.Area.Name,
+    `Estimate!!Total` = Estimate..Total,
+    `Margin of Error!!Total` = Margin.of.Error..Total
+  ) %>% 
+  glimpse
 ```
 
 *Note*: You can find information on 1-year, 3-year, and 5-year estimates [here](https://www.census.gov/programs-surveys/acs/guidance/estimates.html). The punchline is that 5-year estimates are more reliable but less current.
@@ -94,7 +106,7 @@ The New York Times is publishing up-to-date data on COVID-19 on [GitHub](https:/
 
 ```{r q2-task}
 ## TASK: Find the URL for the NYT covid-19 county-level data
-url_counties <- NA_character_
+url_counties <- "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
 ```
 
 Once you have the url, the following code will download a local copy of the data, then load the data into R.
@@ -135,7 +147,8 @@ To join these datasets, we'll need to use [FIPS county codes](https://en.wikiped
 
 ```{r q3-task}
 ## TASK: Create a `fips` column by extracting the county code
-df_q3 <- NA
+df_q3 <- df_pop %>% 
+  mutate(fips = str_sub(id, -5, -1))
 ```
 
 Use the following test to check your answer.
@@ -155,7 +168,7 @@ print("Very good!")
 
 ```{r q4-task}
 ## TASK: Join df_covid and df_q3 by fips.
-df_q4 <- NA
+df_q4 <- left_join(df_covid, df_q3, by = "fips")
 ```
 
 For convenience, I down-select some columns and produce more convenient column
@@ -174,6 +187,7 @@ df_data <-
     deaths,
     population = `Estimate!!Total`
   )
+df_data
 ```
 
 # Analyze
@@ -189,7 +203,12 @@ Now that we've done the hard work of loading and wrangling the data, we can fina
 ```{r q5-task}
 ## TASK: Normalize cases and deaths
 df_normalized <-
-  df_data
+  df_data %>% 
+  mutate(
+    cases_per100k = cases / population * 100000,
+    deaths_per100k = deaths / population * 100000
+  )
+df_normalized
 ```
 
 You may use the following test to check your work.
@@ -237,19 +256,36 @@ Before turning you loose, let's complete a couple guided EDA tasks.
 
 ```{r q6-task}
 ## TASK: Compute mean and sd for cases_per100k and deaths_per100k
+
+df_normalized %>% 
+  summarise(
+    mean_cases = mean(cases_per100k, na.rm = TRUE),
+    sd_cases = sd(cases_per100k, na.rm = TRUE),
+    mean_deaths = mean(deaths_per100k, na.rm = TRUE),
+    sd_deaths = sd(deaths_per100k, na.rm = TRUE)
+  )
 ```
 
 ### __q7__ Find the top 10 counties in terms of `cases_per100k`, and the top 10 in terms of `deaths_per100k`. Report the population of each county along with the per-100,000 counts. Compare the counts against the mean values you found in q6. Note any observations.
 
 ```{r q7-task}
 ## TASK: Find the top 10 max cases_per100k counties; report populations as well
-
+df_normalized %>% 
+  arrange(desc(cases_per100k)) %>% 
+  distinct(fips, .keep_all = TRUE) %>% 
+  slice(1:10)
 ## TASK: Find the top 10 deaths_per100k counties; report populations as well
+df_normalized %>% 
+  arrange(desc(deaths_per100k)) %>% 
+  distinct(fips, .keep_all = TRUE) %>% 
+  slice(1:10)
 ```
 
 **Observations**:
 
-- (Note your observations here!)
+- The counties with the highest `cases_per100k` values well exceeded the mean of the same. Additionally, most of the counties also exceeded the mean deaths values, with the exception of Nome Census Area, Alaska and Kusilvak Census Area, Alaska. This suggests that, generally, a large amount of covid cases is associated with a large amount of deaths.  
+- The counties with the highest `deaths_per100k` also well exceeded the mean of the death values, and they consistently exceeded the mean of the `cases_per100k` values. This suggests that a large number of deaths means there is also a large number of cases.
+- Interestingly, the counties with the most `cases_per100k` are not the same as the counties with the most `deaths_per100k`.
 
 ## Self-directed EDA
 <!-- ------------------------- -->
@@ -267,7 +303,101 @@ Before turning you loose, let's complete a couple guided EDA tasks.
 - Your own idea!
 
 **DO YOUR OWN ANALYSIS HERE**
+```{r self-eda}
+## NOTE: No need to change this; just an example
+df_normalized %>%
+  filter(state == "Florida") %>%
 
+  ggplot(
+    aes(date, cases_per100k, color = fct_reorder2(county, date, cases_per100k))
+  ) +
+  geom_line(
+    data = . %>% filter(county %in% c("Miami-Dade", "Broward", "Palm Beach")),
+  ) +
+  geom_hline(yintercept = 9974.675) +
+  scale_y_log10(labels = scales::label_number_si()) +
+  scale_color_discrete(name = "County") +
+  theme_minimal() +
+  labs(
+    x = "Date",
+    y = "Cases (per 100,000 persons)"
+  )
+```
+
+```{r self-eda}
+## NOTE: No need to change this; just an example
+df_normalized %>%
+  filter(state == "Florida") %>%
+
+  ggplot(
+    aes(date, deaths_per100k, color = fct_reorder2(county, date, deaths_per100k))
+  ) +
+  geom_line(
+    data = . %>% filter(county %in% c("Miami-Dade", "Broward", "Palm Beach")),
+  ) +
+  geom_hline(yintercept = 174.3095) +
+  scale_y_log10(labels = scales::label_number_si()) +
+  scale_color_discrete(name = "County") +
+  theme_minimal() +
+  labs(
+    x = "Date",
+    y = "Deaths (per 100,000 persons)"
+  )
+```
+
+```{r self-eda}
+## NOTE: No need to change this; just an example
+df_normalized %>%
+  filter(county == "Broward") %>%
+
+  ggplot(  ) +
+  geom_line(aes(date, cases_per100k)) +
+  geom_line(aes(date, deaths_per100k)) + 
+  scale_y_log10(labels = scales::label_number_si()) +
+  theme_minimal() +
+  labs(
+    x = "Date",
+    y = "Cases (per 100,000 persons)"
+  )
+```
+```{r self-eda}
+## NOTE: No need to change this; just an example
+df_normalized %>%
+
+  ggplot() +
+  geom_point(aes(cases_per100k, deaths_per100k)) +
+  geom_point(
+    data = . %>% filter(county %in% c("Miami-Dade", "Broward", "Palm Beach")),
+    aes(cases_per100k, deaths_per100k, color = county)
+  ) +
+  geom_hline(yintercept = 9974.675) +
+  scale_y_log10(labels = scales::label_number_si()) +
+  scale_color_discrete(name = "County") +
+  theme_minimal() +
+  labs(
+    x = "Date",
+    y = "Cases (per 100,000 persons)"
+  )
+```
+```{r self-eda}
+## NOTE: No need to change this; just an example
+df_normalized %>%
+  group_by(state) %>% 
+
+  ggplot(aes(state, max(cases_per100k))) +
+  geom_point() +
+  # geom_point(
+  #   data = . %>% filter(state == ),
+  #   aes(color = county)
+  # ) +
+  scale_y_log10(labels = scales::label_number_si()) +
+  scale_color_discrete(name = "County") +
+  theme_minimal() +
+  labs(
+    x = "Date",
+    y = "Cases (per 100,000 persons)"
+  )
+```
 ### Aside: Some visualization tricks
 <!-- ------------------------- -->
 
