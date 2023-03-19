@@ -304,7 +304,6 @@ df_normalized %>%
 
 **DO YOUR OWN ANALYSIS HERE**
 ```{r self-eda}
-## NOTE: No need to change this; just an example
 df_normalized %>%
   filter(state == "Florida") %>%
 
@@ -325,7 +324,6 @@ df_normalized %>%
 ```
 
 ```{r self-eda}
-## NOTE: No need to change this; just an example
 df_normalized %>%
   filter(state == "Florida") %>%
 
@@ -345,59 +343,9 @@ df_normalized %>%
   )
 ```
 
-```{r self-eda}
-## NOTE: No need to change this; just an example
-df_normalized %>%
-  filter(county == "Broward") %>%
 
-  ggplot(  ) +
-  geom_line(aes(date, cases_per100k)) +
-  geom_line(aes(date, deaths_per100k)) + 
-  scale_y_log10(labels = scales::label_number_si()) +
-  theme_minimal() +
-  labs(
-    x = "Date",
-    y = "Cases (per 100,000 persons)"
-  )
-```
-```{r self-eda}
-## NOTE: No need to change this; just an example
-df_normalized %>%
 
-  ggplot() +
-  geom_point(aes(cases_per100k, deaths_per100k)) +
-  geom_point(
-    data = . %>% filter(county %in% c("Miami-Dade", "Broward", "Palm Beach")),
-    aes(cases_per100k, deaths_per100k, color = county)
-  ) +
-  geom_hline(yintercept = 9974.675) +
-  scale_y_log10(labels = scales::label_number_si()) +
-  scale_color_discrete(name = "County") +
-  theme_minimal() +
-  labs(
-    x = "Date",
-    y = "Cases (per 100,000 persons)"
-  )
-```
-```{r self-eda}
-## NOTE: No need to change this; just an example
-df_normalized %>%
-  group_by(state) %>% 
 
-  ggplot(aes(state, max(cases_per100k))) +
-  geom_point() +
-  # geom_point(
-  #   data = . %>% filter(state == ),
-  #   aes(color = county)
-  # ) +
-  scale_y_log10(labels = scales::label_number_si()) +
-  scale_color_discrete(name = "County") +
-  theme_minimal() +
-  labs(
-    x = "Date",
-    y = "Cases (per 100,000 persons)"
-  )
-```
 ### Aside: Some visualization tricks
 <!-- ------------------------- -->
 
