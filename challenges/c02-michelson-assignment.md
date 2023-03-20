@@ -460,12 +460,14 @@ df_q2 %>%
 ![](c02-michelson-assignment_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 **Observations**:
 
-- First graph: The real data exhibits a positive trend as the
-  temperature increases. While the mean velocities observed at each
-  temperature do not increase each time the temperature increases, the
-  overall trend of the mean velocity line exhibits a positive increase
-  as the temperature increases. This behavior suggests that the ambient
-  temperature has an impact on the speed of light.
+- First graph: The real data exhibits a dubious positive trend as the
+  temperature increases. While the overall trend of the mean velocity
+  line exhibits a positive increase as the temperature increases, the
+  mean velocities observed at each temperature do not increase each time
+  the temperature increases. Thus, a clear relationship between the
+  temperature and velocity cannot be determined as there are too many
+  fluctuations in the trends.
+
 - Second graph: The red points represent the mean velocity values at
   each level of distinctness. The graph illustrates an increase in the
   mean velocity values as the distinctness level increases. That being
@@ -473,8 +475,12 @@ df_q2 %>%
   outliers that fall below the actual speed of light in a vacuum. In
   that regard, the data recorded with a distinctness level of 3 seems to
   have a larger quantity of values that fall closer to the actual speed
-  of light, implying that the distinctness level does have an impact on
-  the recorded speed of light.
+  of light. However, given the overlap between the the ranges for each
+  level of distinctness, a clear relationship cannot between
+  distinctness and speed of light cannot be determined.
+
+- There are no patterns in the data that might explain the difference
+  between Michelson’s estimate and the `LIGHTSPEED_VACUUM`.
 
 ## Bibliography
 
