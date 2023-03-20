@@ -236,13 +236,18 @@ reject the null hypothesis?
 
 ```{r q4-task}
 ## TASK: Compute the population proportion of high-cut diamonds
+df_population %>%
+  summarize(proportion = mean((cut == "Premium") | (cut == "Ideal")))
 ```
 
 **Observations**:
 
 - Did you reject the null hypothesis in q2?
+yes
 - What is the actual truth?
+the proportion is greater than 50%
 - What decision did you make?
+did buy
 
 When I did q2 I **did reject the null hypothesis**. It happens that this was the
 correct choice; the true proportion of high-cut diamonds is greater than
