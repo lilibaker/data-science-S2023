@@ -253,6 +253,29 @@ df_stang_long %>% distinct(alloy)
     ##   <chr>  
     ## 1 al_24st
 
+``` r
+df_stang_long %>% distinct(angle)
+```
+
+    ## # A tibble: 3 × 1
+    ##   angle
+    ##   <int>
+    ## 1     0
+    ## 2    45
+    ## 3    90
+
+``` r
+df_stang_long %>% distinct(thick)
+```
+
+    ## # A tibble: 4 × 1
+    ##   thick
+    ##   <dbl>
+    ## 1 0.022
+    ## 2 0.032
+    ## 3 0.064
+    ## 4 0.081
+
 **Observations**:
 
 - Is there “one true value” for the material properties of Aluminum?
@@ -265,7 +288,8 @@ df_stang_long %>% distinct(alloy)
   - 0, 45, and 90 degrees
 - What thicknesses were tested?
   - 0.022, 0.032, 0.064, 0.081 m
-- Does the thickness have an impact on the Poisson’s ratio of the alloy?
+- Question for question 3: Does the thickness have an impact on the
+  Poisson’s ratio of the alloy?
 
 ## Visualize
 

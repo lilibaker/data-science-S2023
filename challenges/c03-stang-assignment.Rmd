@@ -111,6 +111,8 @@ print("Very good!")
 ##
 glimpse(df_stang_long)
 df_stang_long %>% distinct(alloy)
+df_stang_long %>% distinct(angle)
+df_stang_long %>% distinct(thick)
 ```
 
 **Observations**:
@@ -123,7 +125,7 @@ df_stang_long %>% distinct(alloy)
   - 0, 45, and 90 degrees
 - What thicknesses were tested?
   - 0.022, 0.032, 0.064, 0.081 m
-- Does the thickness have an impact on the Poisson's ratio of the alloy?
+- Question for question 3: Does the thickness have an impact on the Poisson's ratio of the alloy?
 
 ## Visualize
 <!-- ------------------------- -->
