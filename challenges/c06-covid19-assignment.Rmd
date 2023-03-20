@@ -303,26 +303,8 @@ df_normalized %>%
 - Your own idea!
 
 **DO YOUR OWN ANALYSIS HERE**
-```{r self-eda}
-df_normalized %>%
-  filter(state == "Florida") %>%
 
-  ggplot(
-    aes(date, cases_per100k, color = fct_reorder2(county, date, cases_per100k))
-  ) +
-  geom_line(
-    data = . %>% filter(county %in% c("Miami-Dade", "Broward", "Palm Beach")),
-  ) +
-  geom_hline(yintercept = 9974.675) +
-  scale_y_log10(labels = scales::label_number_si()) +
-  scale_color_discrete(name = "County") +
-  theme_minimal() +
-  labs(
-    x = "Date",
-    y = "Cases (per 100,000 persons)"
-  )
-```
-
+How did the number of deaths per 100k change over time in South Florida?
 ```{r self-eda}
 df_normalized %>%
   filter(state == "Florida") %>%
@@ -343,8 +325,8 @@ df_normalized %>%
   )
 ```
 
-
-
+- At the beginning of the data, all three counties experience a similar rapid growth in number of deaths as COVID begins to affect South Florida. However, after this initial increase, Miami-Dade county tended to have the most covid deaths per 100k over the time period studied, whilst Broward county had the least. Additionally, Miami-Dade and Palm Beach exceeded the mean (represented by the black line) far before Broward County. These trends could be caused by Miami's position as the most densely populated county, as well as its international hub for travel, whilst Palm Beach tends to encompass an older demographic that is more vulnerable to COVID.
+- Interestingly, Broward county ultimately exceeds the mean deaths per 100k when all three counties experience a large increase in deaths around September in 2021. Up until this point, the number of deaths per 100k seemed to have leveled out, possibly due to COVID vaccines. However, this large jump in 2021 launches an increase in the deaths per 100k for each county. Contextualizing this stark increase, it is evident that the delta variant was spreading through South Florida around the same time period, which could explain this jump.
 
 ### Aside: Some visualization tricks
 <!-- ------------------------- -->
