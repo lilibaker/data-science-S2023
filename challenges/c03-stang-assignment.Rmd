@@ -110,6 +110,7 @@ print("Very good!")
 ```{r q2-task}
 ##
 glimpse(df_stang_long)
+df_stang_long %>% distinct(alloy)
 ```
 
 **Observations**:
@@ -117,7 +118,7 @@ glimpse(df_stang_long)
 - Is there "one true value" for the material properties of Aluminum?
   - No, the values for E and mu differ even when the thickness, alloy, and angle remain the same.
 - How many aluminum alloys are in this dataset? How do you know?
-  - There is only one aluminum alloy as every value in the alloy column is "al_24st".
+  - There is only one aluminum alloy "al_24st", as demonstrated by running `distinct(alloy)`.
 - What angles were tested?
   - 0, 45, and 90 degrees
 - What thicknesses were tested?

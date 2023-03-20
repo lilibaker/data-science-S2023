@@ -244,14 +244,23 @@ glimpse(df_stang_long)
     ## $ E     <dbl> 10600, 10700, 10500, 10600, 10500, 10700, 10400, 10400, 10300, 1…
     ## $ mu    <dbl> 0.321, 0.329, 0.310, 0.323, 0.331, 0.323, 0.329, 0.318, 0.322, 0…
 
+``` r
+df_stang_long %>% distinct(alloy)
+```
+
+    ## # A tibble: 1 × 1
+    ##   alloy  
+    ##   <chr>  
+    ## 1 al_24st
+
 **Observations**:
 
 - Is there “one true value” for the material properties of Aluminum?
   - No, the values for E and mu differ even when the thickness, alloy,
     and angle remain the same.
 - How many aluminum alloys are in this dataset? How do you know?
-  - There is only one aluminum alloy as every value in the alloy column
-    is “al_24st”.
+  - There is only one aluminum alloy “al_24st”, as demonstrated by
+    running `distinct(alloy)`.
 - What angles were tested?
   - 0, 45, and 90 degrees
 - What thicknesses were tested?
