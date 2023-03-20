@@ -82,12 +82,12 @@ df_antibiotics %>%
   ) %>% 
   mutate(MIC = as.double(MIC)) %>% 
   
-  ggplot(aes(antibiotic, MIC)) +
-  geom_point(aes(color = bacteria)) +
+  ggplot(aes(bacteria, MIC)) +
+  geom_point(aes(color = antibiotic)) +
   scale_y_log10() +
   facet_wrap(~ gram) +
   theme(
-    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+    axis.text.x = element_text(size = 6, angle = 45, vjust = 1, hjust=1),
     legend.key.size = unit(0.3, 'cm')
   )
 ```
@@ -140,11 +140,6 @@ df_antibiotics %>%
     data = . %>% filter(startsWith(bacteria, 'Streptococcus')),
     mapping = aes(color = bacteria),
     size = 2
-  ) +
-  geom_point(
-    data = . %>% filter(bacteria == 'Diplococcus pneumonia'),
-    mapping = aes(shape = bacteria, color = bacteria),
-    size = 3
   ) +
   scale_y_log10() +
   facet_wrap(~ gram) +
