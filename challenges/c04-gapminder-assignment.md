@@ -207,7 +207,8 @@ can.
 gapminder %>% 
   filter(year == year_min) %>% 
   ggplot(aes(continent, gdpPercap)) +
-    geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
+    geom_boxplot() +
+  scale_y_log10()
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q2-task-1.png)<!-- -->
@@ -216,8 +217,8 @@ gapminder %>%
 
 - Oceania tends to have the highest gdp per capita as the entirety of
   the boxplot is greater than that of the other continents, excluding
-  outliers. Additionally, Europe appears to have the largest
-  interquartile range, while Oceania has the smallest.
+  outliers. Additionally, Asia appears to have the largest interquartile
+  range, while Oceania has the smallest.
 
 **Difficulties & Approaches**:
 
@@ -228,9 +229,8 @@ gapminder %>%
   15000 USD, while the outlier was 108392 USD. This difference in scale
   resulted in the boxplots appearing as a single line, making it
   difficult to analyze the data. To counteract this problem, I decided
-  to use a violin plot, which made it easier to see the density of data,
-  as well as the quartiles, despite the scaling issue resulting from the
-  outlier of Kuwait.
+  to use log scale for the y axis, which enabled all of the data to be
+  shown in a readable format.
 
 ### **q3** You should have found *at least* three outliers in q2 (but possibly many more!). Identify those outliers (figure out which countries they are).
 
