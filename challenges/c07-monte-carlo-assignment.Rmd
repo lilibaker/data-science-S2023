@@ -1,7 +1,7 @@
 ---
 title: "Estimating Pi With a Shotgun"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2023-03-24
 output:
   github_document:
     toc: true
@@ -101,15 +101,26 @@ Remember in `e-stat02-probability` we learned how to estimate probabilities as t
 
 ```{r q1-task}
 ## TASK: Choose a sample size and generate samples
-n <- NA_real_ # Choose a sample size
-df_q1 <- NA # Generate the data
+n <- 100000 # Choose a sample size
+df_q1 <- 
+  tibble(
+    x = runif(n, min = 0, max = 1),
+    y = runif(n, min = 0, max = 1)
+  ) %>% 
+  mutate(
+    in_circle = (sqrt(1 - x^2) >= y),
+    stat = cummean(in_circle) * 4
+  )
+df_q1
 ```
 
 ### __q2__ Using your data in `df_q1`, estimate $\pi$.
 
 ```{r q2-task}
 ## TASK: Estimate pi using your data from q1
-pi_est <- NA_real_
+pi_est <- df_q1 %>% 
+  select(stat) %>% 
+  tail(1)
 pi_est
 ```
 
@@ -121,6 +132,18 @@ You now have an estimate of $\pi$, but how trustworthy is that estimate? In `e-s
 ### __q3__ Using a CLT approximation, produce a confidence interval for your estimate of $\pi$. Make sure you specify your confidence level. Does your interval include the true value of $\pi$? Was your chosen sample size sufficiently large so as to produce a trustworthy answer?
 
 ```{r q3-task}
+df_q3 <-
+  df_q1 %>%
+  summarize(
+    pi_mean = mean(stat),
+    pi_sd = sd(stat),
+  ) %>%
+  mutate(
+   ci_lwr = pi_mean - 1.95 * pi_sd / sqrt(n),
+   ci_upr = pi_mean + 1.95 * pi_sd / sqrt(n)
+  ) %>%
+  select(ci_lwr, ci_upr)
+df_q3
 ```
 
 **Observations**:
