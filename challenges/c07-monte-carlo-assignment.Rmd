@@ -101,7 +101,7 @@ Remember in `e-stat02-probability` we learned how to estimate probabilities as t
 
 ```{r q1-task}
 ## TASK: Choose a sample size and generate samples
-n <- 100000 # Choose a sample size
+n <- 1000 # Choose a sample size
 df_q1 <- 
   tibble(
     x = runif(n, min = 0, max = 1),
@@ -119,8 +119,11 @@ df_q1
 ```{r q2-task}
 ## TASK: Estimate pi using your data from q1
 pi_est <- df_q1 %>% 
-  select(stat) %>% 
-  tail(1)
+  # select(stat) %>% 
+  # tail(1)
+  summarise(
+    mean(stat)
+  )
 pi_est
 ```
 
@@ -139,10 +142,10 @@ df_q3 <-
     pi_sd = sd(stat),
   ) %>%
   mutate(
-   ci_lwr = pi_mean - 1.95 * pi_sd / sqrt(n),
-   ci_upr = pi_mean + 1.95 * pi_sd / sqrt(n)
+   ci_lwr = pi_mean - 1.05 * pi_sd / sqrt(n),
+   ci_upr = pi_mean + 1.05 * pi_sd / sqrt(n)
   ) %>%
-  select(ci_lwr, ci_upr)
+  select(pi_mean, pi_sd, ci_lwr, ci_upr)
 df_q3
 ```
 
