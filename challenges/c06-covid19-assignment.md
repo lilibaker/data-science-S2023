@@ -491,6 +491,9 @@ Before turning you loose, let’s complete a couple guided EDA tasks.
 ## TASK: Compute mean and sd for cases_per100k and deaths_per100k
 
 df_normalized %>% 
+  filter(
+    date == tail(date)
+  ) %>% 
   summarise(
     mean_cases = mean(cases_per100k, na.rm = TRUE),
     sd_cases = sd(cases_per100k, na.rm = TRUE),
@@ -499,10 +502,13 @@ df_normalized %>%
   )
 ```
 
+    ## Warning in `==.default`(date, tail(date)): longer object length is not a
+    ## multiple of shorter object length
+
     ## # A tibble: 1 × 4
     ##   mean_cases sd_cases mean_deaths sd_deaths
     ##        <dbl>    <dbl>       <dbl>     <dbl>
-    ## 1      9975.    8449.        174.      159.
+    ## 1     24774.    6233.        375.      160.
 
 ### **q7** Find the top 10 counties in terms of `cases_per100k`, and the top 10 in terms of `deaths_per100k`. Report the population of each county along with the per-100,000 counts. Compare the counts against the mean values you found in q6. Note any observations.
 
@@ -557,14 +563,19 @@ df_normalized %>%
 **Observations**:
 
 - The counties with the highest `cases_per100k` values well exceeded the
-  mean of the same. Additionally, most of the counties also exceeded the
-  mean deaths values, with the exception of Nome Census Area, Alaska and
-  Kusilvak Census Area, Alaska. This suggests that, generally, a large
-  amount of covid cases is associated with a large amount of deaths.  
+  mean value on 2022-05-13 of the same. However, when it came to
+  exceeding the mean value of `deaths-per-100k` on the same day, only
+  half of them exceeded the mean, with those being Loving, Texas;
+  Crowley, Colorado; Dewey, South Dakota; Dimmt, Texas; and Jim Hogg,
+  Texas. Additionally, most of the counties also exceeded the mean
+  deaths values, with the exception of Nome Census Area, Alaska and
+  Kusilvak Census Area, Alaska. This suggests that a large amount of
+  covid cases does not necessarily mean that there will be a large
+  number of deaths.
 - The counties with the highest `deaths_per100k` also well exceeded the
-  mean of the death values, and they consistently exceeded the mean of
-  the `cases_per100k` values. This suggests that a large number of
-  deaths means there is also a large number of cases.
+  mean of the death values, but they did not consistently exceede the
+  mean of the `cases_per100k` values. This suggests that a large number
+  of deaths does not mean that there is also a large number of cases.
 - Interestingly, the counties with the most `cases_per100k` are not the
   same as the counties with the most `deaths_per100k`.
 
