@@ -258,6 +258,9 @@ Before turning you loose, let's complete a couple guided EDA tasks.
 ## TASK: Compute mean and sd for cases_per100k and deaths_per100k
 
 df_normalized %>% 
+  filter(
+    date == tail(date)
+  ) %>% 
   summarise(
     mean_cases = mean(cases_per100k, na.rm = TRUE),
     sd_cases = sd(cases_per100k, na.rm = TRUE),
@@ -283,8 +286,9 @@ df_normalized %>%
 
 **Observations**:
 
-- The counties with the highest `cases_per100k` values well exceeded the mean of the same. Additionally, most of the counties also exceeded the mean deaths values, with the exception of Nome Census Area, Alaska and Kusilvak Census Area, Alaska. This suggests that, generally, a large amount of covid cases is associated with a large amount of deaths.  
-- The counties with the highest `deaths_per100k` also well exceeded the mean of the death values, and they consistently exceeded the mean of the `cases_per100k` values. This suggests that a large number of deaths means there is also a large number of cases.
+- The counties with the highest `cases_per100k` values well exceeded the mean value on 2022-05-13 of the same. However, when it came to exceeding the mean value of `deaths-per-100k` on the same day, only half of them exceeded the mean, with those being Loving, Texas; Crowley, Colorado; Dewey, South Dakota; Dimmt, Texas; and Jim Hogg, Texas.
+Additionally, most of the counties also exceeded the mean deaths values, with the exception of Nome Census Area, Alaska and Kusilvak Census Area, Alaska. This suggests that a large amount of covid cases does not necessarily mean that there will be a large number of deaths.
+- The counties with the highest `deaths_per100k` also well exceeded the mean of the death values, but they did not consistently exceede the mean of the `cases_per100k` values. This suggests that a large number of deaths does not mean that there is also a large number of cases.
 - Interestingly, the counties with the most `cases_per100k` are not the same as the counties with the most `deaths_per100k`.
 
 ## Self-directed EDA
