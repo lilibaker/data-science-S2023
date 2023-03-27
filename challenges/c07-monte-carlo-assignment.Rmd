@@ -101,15 +101,14 @@ Remember in `e-stat02-probability` we learned how to estimate probabilities as t
 
 ```{r q1-task}
 ## TASK: Choose a sample size and generate samples
-n <- 1000 # Choose a sample size
+n <- 10000 # Choose a sample size
 df_q1 <- 
   tibble(
     x = runif(n, min = 0, max = 1),
     y = runif(n, min = 0, max = 1)
   ) %>% 
   mutate(
-    in_circle = (sqrt(1 - x^2) >= y),
-    stat = cummean(in_circle) * 4
+    stat = (sqrt(1 - x^2) >= y),
   )
 df_q1
 ```
@@ -119,10 +118,8 @@ df_q1
 ```{r q2-task}
 ## TASK: Estimate pi using your data from q1
 pi_est <- df_q1 %>% 
-  # select(stat) %>% 
-  # tail(1)
   summarise(
-    mean(stat)
+    mean(stat) * 4
   )
 pi_est
 ```
@@ -138,12 +135,12 @@ You now have an estimate of $\pi$, but how trustworthy is that estimate? In `e-s
 df_q3 <-
   df_q1 %>%
   summarize(
-    pi_mean = mean(stat),
-    pi_sd = sd(stat),
+    pi_mean = mean(stat) * 4,
+    pi_sd = sd(stat) * 4,
   ) %>%
   mutate(
-   ci_lwr = pi_mean - 1.05 * pi_sd / sqrt(n),
-   ci_upr = pi_mean + 1.05 * pi_sd / sqrt(n)
+   ci_lwr = pi_mean - 1.96 * pi_sd / sqrt(n),
+   ci_upr = pi_mean + 1.96 * pi_sd / sqrt(n)
   ) %>%
   select(pi_mean, pi_sd, ci_lwr, ci_upr)
 df_q3
@@ -152,11 +149,11 @@ df_q3
 **Observations**:
 
 - Does your interval include the true value of $\pi$?
-  - (Your response here)
+  - Yes, the interval does include the true value of $\pi$.
 - What confidence level did you choose?
-  - (Your response here)
+  - 95%
 - Was your sample size $n$ large enough? Why do you say that?
-  - (Your response here)
+  - Yes, the sample size of 10,000 resulted in a confidence interval that included the value of $\pi$ at the 95% confidence level, and the mean value of `stat` was 3.13, which is fairly close to the actual value of $\pi$. While a larger sample size probably would have resulted in a more accurate value of `pi_mean`, the values obtained with the chosen sample size are very close to the actual value, suggesting that the sample size was sufficient.
 
 # References
 <!-- -------------------------------------------------- -->
