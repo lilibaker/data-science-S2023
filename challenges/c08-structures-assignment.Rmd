@@ -54,7 +54,7 @@ filename_samples <- "./data/al_samples.csv"
 
 By Jorge Stolfi - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=24499456
 
-*Strength* is a measure of how much internal stress an object can survive: A higher strength means a stronger material. This challenge's data are very simple: They are (synthetic) observations of ultimate tensile strength (UTS) on individual samples of the same aluminum alloy. The experiments were carried out following the higest standards of experimental rigor, so you should consider these values to be the "true" breaking strength for each sample.
+*Strength* is a measure of how much internal stress an object can survive: A higher strength means a stronger material. This challenge's data are very simple: They are (synthetic) observations of ultimate tensile strength (UTS) on individual samples of the same aluminum alloy. The experiments were carried out following the highest standards of experimental rigor, so you should consider these values to be the "true" breaking strength for each sample.
 
 ```{r read-data}
 ## NOTE: No need to edit; load data
@@ -70,16 +70,21 @@ Data Dictionary:
 ### __q1__ Visualize the strength data with a histogram. Answer the questions below.
 
 ```{r q1-task}
+df_samples %>% 
+  ggplot(aes(strength)) + 
+  geom_histogram(bins = 60)
+df_samples %>% 
+  summarize(mean = mean(strength))
 ```
 
 **Observations**:
 
 - What is the mean strength of the material, approximately?
-  - (Your response here)
+  - 40000 psi
 - To what extent can you tell what shape the distribution of the data has?
-  - (Your response here)
+  - There is a larger portion of the data centered around 40000 psi, but the shape is not very defined.
 - Assuming the scopus is the strength of an individual part made from this aluminum alloy, is the observed variability real or induced?
-  - (Your response here)
+  - real since the the experiment was conducted with such standards that the values obtained were deemed "true", so the variation must be from the samples themselves.
 
 # Assessing Structural Safety
 <!-- ----------------------------------------------------------------------- -->
@@ -117,17 +122,22 @@ $$\text{POF} \equiv \mathbb{P}[g \leq 0].$$
 
 ```{r q2-task}
 ## TODO: Estimate the probability of failure; i.e. POF = Pr[g <= 0]
-df_samples
+df_samples %>% 
+  mutate(
+    g = g_break(strength),
+    failure = g - mean(g),
+    pof = cummean(failure <= 0)
+  )
 ```
 
 **Observations**:
 
 - Does this estimate satisfy `POF < 0.03`?
-  - (Your response here)
+  - no
 - Is this estimate of the probability of failure trustworthy? Why or why not?
-  - (Your response here)
+  - No, it is affected by the variability in the strength values.
 - Can you confidently conclude that `POF < 0.03`? Why or why not.
-  - (Your response here)
+  - No, due to the variability in the strengths, the POF is much greater.
 
 ## Material property model
 <!-- --------------------------------------- -->
@@ -144,7 +154,11 @@ Since we have so few physical samples, we will fit a distribution to model the m
 
 ```{r q3-task}
 ## TODO:
-df_fit <- NA
+
+df_fit <- df_samples %>% 
+  pull(strength) %>%
+  fitdistr(densfun = "lognormal") %>% 
+  tidy()
 df_fit
 ```
 
@@ -158,11 +172,11 @@ Once you've successfully fit a model for the strength, you can estimate the prob
 
 ```{r q4-task}
 ## TODO 1: Choose Monte Carlo sample size
-n_monte_carlo <- NA_real_
+n_monte_carlo <- 100
 
 ## TODO 2: Extract parameter estimates from df_fit
-strength_meanlog <- NA_real_
-strength_sdlog <- NA_real_
+strength_meanlog <- df_fit[[1, 1]]
+strength_sdlog <- df_fit[[2, 1]]
 
 # Generate samples
 df_norm_sim <-
