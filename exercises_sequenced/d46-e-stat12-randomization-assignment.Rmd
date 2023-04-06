@@ -105,11 +105,11 @@ experimental_design %>%
 *Observations*
 
 - Which experimental condition do you *expect* to have greater yield? The Treatment `T` or Control `C`?
-  - (Your response here)
+  - treatment
 - Which experimental condition do your results suggest has a higher mean yield? The Treatment `T` or Control `C`?
-  - (Your response here)
+  - control
 - The true difference between the treatment mean and control mean is such that the treatment yield should be `1` unit higher. How does your difference compare with that difference?
-  - (Your response here)
+  - the difference is negative instead of positive
 
 ## Confound - Increased yield due to proximity to the river!
 
@@ -154,7 +154,7 @@ Terminology: When there are other factors present in an experiment affecting our
 
 ```{r q2-task}
 ## TODO: Define your own experimental design
-your_design <- NA_character_
+your_design <- c("C", "T", "C", "T", "C", "T")
 
 ## NOTE: No need to edit; use this to simulate your design
 your_design %>%
@@ -169,11 +169,11 @@ your_design %>%
 *Observations*
 
 - Which experimental condition do your results suggest has a higher mean yield? The Treatment `T` or Control `C`?
-  - (Your response here)
+  - treatment
 - The true difference between the treatment mean and control mean is such that the treatment yield should be `1` unit higher. How does your difference compare with that difference?
-  - (Your response here)
+  - there is a difference of around 0.8
 - What effects are you seeing? The effect of the Treatment `T` *only*, or the combined effects of the Treatment and the river? How does this affect your estimate of the effect of the treatment?
-  - (Your response here)
+  - combined affects of the treatment and the river, which means the estimate is not accurate
 
 ## Randomization to the rescue!
 
@@ -216,11 +216,11 @@ experimental_design %>%
 *Observations*
 
 - Which experimental condition do you find has a higher mean yield? The Treatment `T` or Control `C`?
-  - (Your response here)
+  - control
 - Since you've randomized the conditions, will the confound (river) have a *consistent* effect on the outcome?
-  - (Your response here)
+  - no because the run order is randomized
 - The true difference between the treatment mean and control mean is one unit. How does your difference compare with that value?
-  - (Your response here)
+  - the control is greater than the treatment, so it is the wrong sign
 
 ## Why does randomization work?
 
