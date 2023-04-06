@@ -73,7 +73,59 @@ Load and clean the table you extracted above. Use the column names `category` an
 
 ```{r q4-task, eval=FALSE}
 ## TODO: Load and clean the data
-df_2019 <- NA
+df_2019_raw <- read_csv(
+  "./data/tabula-Needham MA FS19 - Final.csv",
+  skip = 1,
+  col_names = c(
+    "category",
+    "X2",
+    "governmental_2019",
+    "X4",
+    "governmental_2018",
+    "X6",
+    "business_2019",
+    "X8",
+    "business_2018",
+    "X10",
+    "total_2019",
+    "X12",
+    "total_2018"
+  )
+)
+df_2019 <-
+  df_2019_raw %>%
+  select(-contains("X")) %>%
+  ## across() allows us to apply the same mutation to multiple
+  ## columns; remove all internal spaces from numbers
+  mutate(across(-category, ~str_remove_all(., "\\s"))) %>%
+  ## Handle numbers enclosed by parentheses; make them negative
+  ## and remove all parentheses for the number parser
+  mutate(across(
+    -category,
+    ~if_else(
+      str_detect(., "\\("),
+      str_c("-", str_remove_all(., "[\\(\\)]")),
+      str_remove_all(., "[\\(\\)]")
+    )
+  )) %>%
+  ## Use the number parser to handle conversions
+  mutate(across(-category, parse_number)) %>%
+  ## Fix a couple chopped lines
+  mutate(
+    category = if_else(
+      category == "resources",
+      "Total assets and deferred outflow of resources",
+      category
+    )
+  ) %>%
+  mutate(
+    category = str_replace(
+      category,
+      "resources, and net position",
+      "Total liabilities, deferred inflow of resources, and net position"
+    )
+  ) %>%
+  filter(!is.na(governmental_2019))
 df_2019 %>% glimpse()
 ```
 
