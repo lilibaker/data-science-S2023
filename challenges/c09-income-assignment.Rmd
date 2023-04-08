@@ -155,15 +155,14 @@ $$\text{MOE} = 1.645 \times \text{SE}.$$
 ### __q4__ Convert the margin of error to standard error. Additionally, compute a 99% confidence interval on income, and normalize the standard error to `income_CV = income_SE / income_estimate`. Provide these columns with the names `income_SE, income_lo, income_hi, income_CV`.
 
 ```{r q4-task}
-mean_q3 <- df_q3 %>% 
-  summarize(mean = mean(income_estimate))
+q_99 <- qnorm( 1 - (1 - 0.99) / 2 )
 
 df_q4 <- df_q3 %>%
  mutate(
    income_SE = income_moe / 1.645,
    income_CV = income_SE / income_estimate,
-   income_lo = mean_q3[["mean"]][1] - 2.576 * income_CV,
-   income_hi = mean_q3[["mean"]][1] + 2.576 * income_CV,
+   income_lo = income_estimate - q_99 * income_SE,
+   income_hi = income_estimate + q_99 * income_SE,
  )
 df_q4
 ```
@@ -214,7 +213,8 @@ One last wrangling step: We need to join the two datasets so we can compare popu
 
 ```{r q5-task}
 ## TODO: Join df_q4 and df_pop by the appropriate column
-df_data
+df_data <-
+  
 ```
 
 # Analysis
