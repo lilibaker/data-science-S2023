@@ -363,8 +363,8 @@ df_norm_sim <-
 
     ## Rows: 100,000
     ## Columns: 2
-    ## $ strength <dbl> 39532.15, 39634.98, 39982.27, 40650.78, 40399.82, 39927.28, 3…
-    ## $ g        <dbl> 316.45957, 419.29352, 766.58669, 1435.09698, 1184.13869, 711.…
+    ## $ strength <dbl> 39949.19, 39819.27, 39345.49, 39681.83, 39726.10, 39996.81, 3…
+    ## $ g        <dbl> 733.5028, 603.5881, 129.8001, 466.1453, 510.4104, 781.1263, 7…
 
 ``` r
 ## NOTE: The following code estimates the POF and a 95% confidence interval
@@ -387,18 +387,15 @@ df_norm_pof
     ## # A tibble: 1 × 3
     ##   pof_lo pof_est pof_hi
     ##    <dbl>   <dbl>  <dbl>
-    ## 1 0.0170  0.0178 0.0187
+    ## 1 0.0177  0.0185 0.0193
 
 - Assuming your scopus is the probability of failure `POF` defined
   above, does your estimate exhibit real variability, induced
   variability, or both?
-  - Both. There is real variability from the variations between the
-    samples (as discussed in q1) since the values in q3 exhibited the
-    real variability from the samples themselves. Thus, by using them to
-    generate the POF in this question, the real variability is still
-    present. The induced variability comes from the variation in
-    datapoints even though the same values of meanlog and sdlog are used
-    in the generation of the samples.
+  - The estimate exhibits induced variability, which partially comes
+    from the effect of the limited sample size on the calculation of the
+    POF, as well as the variability that comes from the Monte Carlo
+    sampling.
 - Does this confidence interval imply that `POF < 0.03`?
   - Yes, the estimated POF is below 0.03, and the confidence interval
     lies below 0.03.
@@ -408,9 +405,9 @@ df_norm_pof
     of values that all lie below 0.03.
 - Does the confidence interval above account for uncertainty arising
   from the *Monte Carlo approximation*? Why or why not?
-  - Yes, the confidence interval demonstrates that there is a range of
-    likely values for the POF, which accounts for the variations that
-    occur in the generation of samples in the Monte Carlo approximation.
+  - Yes, the mean and standard deviation used in the creation of the
+    confidence intervals come from the Monte Carlo samples, so the
+    uncertainty from these approximations are accounted for.
 - Does the confidence interval above account for uncertainty arising
   from *limited physical tests* (`df_samples`)? Why or why not?
   - No, because the mean and standard deviation values used to generate
@@ -419,8 +416,9 @@ df_norm_pof
 - What could you do to tighten up the confidence interval?
   - Increase the number of samples.
 - Can you *confidently* conclude that `POF < 0.03`? Why or why not?
-  - Yes, with the given data, the entirety of the confidence interval
-    falls well below 0.03 with 100,000 samples.
+  - No, since the confidence interval does not account for the induced
+    variability caused by the limited samples,you cannot confidently
+    conclude that POF \< 0.03.
 
 ## A different way to compute the POF
 
@@ -498,7 +496,9 @@ df_samples %>% estimate_pof()
     and standard deviation of the 25 samples that exhibited variability.
 - With the scopus as the `POF`, would uncertainty due to *limited
   physical tests* be induced or real?
-  - Real because it is variability across the samples themselves.
+  - Induced because the number of measurements in the measurement
+    process is the cause of the uncertainty, as opposed to a property of
+    the material.
 
 ## Quantifying sampling uncertainty
 
@@ -530,9 +530,9 @@ df_samples %>%
 ```
 
     ## # A tibble: 1 × 6
-    ##   term   .lower .estimate .upper .alpha .method   
-    ##   <chr>   <dbl>     <dbl>  <dbl>  <dbl> <chr>     
-    ## 1 pof   0.00121    0.0180 0.0522   0.05 percentile
+    ##   term    .lower .estimate .upper .alpha .method   
+    ##   <chr>    <dbl>     <dbl>  <dbl>  <dbl> <chr>     
+    ## 1 pof   0.000922    0.0179 0.0490   0.05 percentile
 
 **Observations**:
 

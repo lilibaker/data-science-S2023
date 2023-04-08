@@ -209,19 +209,19 @@ df_norm_pof
 ```
 
 - Assuming your scopus is the probability of failure `POF` defined above, does your estimate exhibit real variability, induced variability, or both?
-  - Both. There is real variability from the variations between the samples (as discussed in q1) since the values in q3 exhibited the real variability from the samples themselves. Thus, by using them to generate the POF in this question, the real variability is still present. The induced variability comes from the variation in datapoints even though the same values of meanlog and sdlog are used in the generation of the samples. 
+  - The estimate exhibits induced variability, which partially comes from the effect of the limited sample size on the calculation of the POF, as well as the variability that comes from the Monte Carlo sampling.
 - Does this confidence interval imply that `POF < 0.03`?
   - Yes, the estimated POF is below 0.03, and the confidence interval lies below 0.03.
 - Compare this probability with your estimate from q2; is it more or less trustworthy?
   - More trustworthy as there are much more samples and there is a range of values that all lie below 0.03.
 - Does the confidence interval above account for uncertainty arising from the *Monte Carlo approximation*? Why or why not?
-  - Yes, the confidence interval demonstrates that there is a range of likely values for the POF, which accounts for the variations that occur in the generation of samples in the Monte Carlo approximation.
+  - Yes, the mean and standard deviation used in the creation of the confidence intervals come from the Monte Carlo samples, so the uncertainty from these approximations are accounted for.
 - Does the confidence interval above account for uncertainty arising from *limited physical tests* (`df_samples`)? Why or why not?
   - No, because the mean and standard deviation values used to generate the samples used for the confidence interval are dependent upon the 25 samples.
 - What could you do to tighten up the confidence interval?
   - Increase the number of samples.
 - Can you *confidently* conclude that `POF < 0.03`? Why or why not?
-  - Yes, with the given data, the entirety of the confidence interval falls well below 0.03 with 100,000 samples.
+  - No, since the confidence interval does not account for the induced variability caused by the limited samples,you cannot confidently conclude that POF < 0.03.
 
 ## A different way to compute the POF
 <!-- --------------------------------------- -->
@@ -278,7 +278,7 @@ df_samples %>% estimate_pof()
 - Does this estimate have any uncertainty due to *limited physical tests*? Why or why not?
   - Yes, the mean and standard deviation values are based on the mean and standard deviation of the 25 samples that exhibited variability.
 - With the scopus as the `POF`, would uncertainty due to *limited physical tests* be induced or real?
-  - Real because it is variability across the samples themselves.
+  - Induced because the number of measurements in the measurement process is the cause of the uncertainty, as opposed to a property of the material.
 
 ## Quantifying sampling uncertainty
 <!-- --------------------------------------- -->
