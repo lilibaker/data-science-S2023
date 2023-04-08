@@ -155,15 +155,15 @@ $$\text{MOE} = 1.645 \times \text{SE}.$$
 ### __q4__ Convert the margin of error to standard error. Additionally, compute a 99% confidence interval on income, and normalize the standard error to `income_CV = income_SE / income_estimate`. Provide these columns with the names `income_SE, income_lo, income_hi, income_CV`.
 
 ```{r q4-task}
+mean_q3 <- df_q3 %>% 
+  summarize(mean = mean(income_estimate))
+
 df_q4 <- df_q3 %>%
- summarize(
-   mean = mean(income_estimate),
- ) %>% 
  mutate(
-   income_SE = df_q3$income_moe / 1.645,
-   income_CV = income_SE / df_q3$income_estimate,
-   income_lo = mean - 2.576 * income_CV,
-   income_hi = mean + 2.576 * income_CV,
+   income_SE = income_moe / 1.645,
+   income_CV = income_SE / income_estimate,
+   income_lo = mean_q3[["mean"]][1] - 2.576 * income_CV,
+   income_hi = mean_q3[["mean"]][1] + 2.576 * income_CV,
  )
 df_q4
 ```
