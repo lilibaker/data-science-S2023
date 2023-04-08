@@ -117,10 +117,15 @@ df_q3 <-
   mutate(across(contains("median"), as.numeric)) %>%
 ## TODO: Pivot the data, rename the columns
   pivot_longer(
-    everything(),
+    cols = !Geography & !"Geographic Area Name",
     names_to = c(".value", "category"),
-    names_pattern = "(Estimate|Margin of Error)!!.!!.!!.{18}",
-  )
+    names_pattern = "(Estimate|Margin of Error).+([0-9].+)$",
+  ) %>% 
+  rename (
+    geographic_area_name = "Geographic Area Name",
+    income_estimate = Estimate,
+    income_moe = "Margin of Error"
+  ) %>% 
   glimpse()
 ```
 
