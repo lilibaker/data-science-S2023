@@ -214,7 +214,11 @@ One last wrangling step: We need to join the two datasets so we can compare popu
 ```{r q5-task}
 ## TODO: Join df_q4 and df_pop by the appropriate column
 df_data <-
-  
+  df_q4 %>% 
+  left_join(
+    df_pop,
+    by = "Geography"
+  )
 ```
 
 # Analysis
@@ -249,13 +253,13 @@ df_data %>%
 **Observations**:
 
 - Document your observations here.
-  - (Your response here)
-  - (Your response here)
-  - ...
+  - As the number of people in the household increases, the confidence interval for the median household income widens, demonstrating a greater range of potential incomes. However, these confidence intervals sometimes cover ranges of income that are less than that of smaller households, such as in the case of Essex, suggesting that the increase in household size leads to a greater range of potential median income values that are not necessarily greater than those of lower household sizes.
+  - Two and three people households tend to have much lower median incomes that exhibit a much smaller range of potential values, while the households with more people exhibit much larger ranges of potential values. 
+  - As the number of people in the household increases, the confidence intervals of the median household income tend to overlap, suggesting that the increase in people does not necessarily mean there is an increase in median income.
 - Can you confidently distinguish between household incomes in Suffolk county? Why or why not?
-  - (Your response here)
+  - No, the confidence intervals for all of the household sizes overlap, which means that you cannot distinguish between household incomes.
 - Which counties have the widest confidence intervals?
-  - (Your response here)
+  - Nantucket, Hampshire, Dukes, and Berkshire have the widest confidence intervals
 
 In the next task you'll investigate the relationship between population and uncertainty.
 
@@ -264,14 +268,19 @@ In the next task you'll investigate the relationship between population and unce
 *Hint*: Remember that standard error is a function of *both* variability (e.g. variance) and sample size.
 
 ```{r q7-task}
+df_data %>% 
+  ggplot(aes(population_estimate, income_SE)) +
+  geom_point() +
+  scale_y_log10() +
+  scale_x_log10()
 ```
 
 **Observations**:
 
 - What *overall* trend do you see between `SE` and population? Why might this trend exist?
-  - (Your response here)
+  - As the population increases, the standard error tends to decrease, which is due to the fact that a higher population leads to more data points by which the income_estimate can be calculated, resulting in a decrease in the standard error.
 - What does this *overall* trend tell you about the relative ease of studying small vs large counties?
-  - (Your response here)
+  - Large counties are easier to study than smaller counties because a greater population generally means a smaller standard error, making it easier to see patterns and draw conclusions.
 
 # Going Further
 <!-- ----------------------------------------------------------------------- -->
@@ -280,13 +289,32 @@ Now it's your turn! You have income data for every county in the United States: 
 
 ### __q8__ Pose your own question about the data. Create a visualization (or table) here, and document your observations.
 
+How do the median income levels differ across south Florida?
 ```{r q8-task}
-## TODO: Pose and answer your own question about the data
+wid <- 0.5
+df_data %>%
+  filter(str_detect(geographic_area_name, "Broward")| str_detect(geographic_area_name, "Palm Beach") | str_detect(geographic_area_name, "Miami-Dade")) %>%
+  mutate(
+    county = str_remove(geographic_area_name, " County,.*$"),
+    county = fct_reorder(county, income_estimate)
+  ) %>%
+  ggplot(aes(county, income_estimate, color = category)) +
+  geom_errorbar(
+    aes(ymin = income_lo, ymax = income_hi),
+    position = position_dodge(width = wid)
+  ) +
+  geom_point(position = position_dodge(width = wid)) +
+  coord_flip() +
+  labs(
+    x = "County",
+    y = "Median Household Income"
+  )
 ```
 
 **Observations**:
 
-- Document your observations here
+- Miami-Dade county has the largest disparity between the median income levels with regards to the family size. However, the confidence intervals in Miami-Dade county are the smallest, demonstrating that even though there are large differences between the income levels at each size, they still tend to have less variety within each household category.
+- On the other hand, Palm Beach county has the least variety across the household categories as the median income ranges are all congregated around a higher level with lots of overlap. However, the confidence intervals are much larger than in the other counties, demonstrating that even with the higher median values, there is greater variety at the level of the household size category.
 
 Ideas:
 
