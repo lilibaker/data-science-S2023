@@ -101,6 +101,7 @@ Remember in `e-stat02-probability` we learned how to estimate probabilities as t
 
 ```{r q1-task}
 ## TASK: Choose a sample size and generate samples
+set.seed(101)
 n <- 10000 # Choose a sample size
 df_q1 <- 
   tibble(
@@ -108,7 +109,7 @@ df_q1 <-
     y = runif(n, min = 0, max = 1)
   ) %>% 
   mutate(
-    stat = (sqrt(1 - x^2) >= y),
+    stat = 4 * (x^2 + y^2 <= 1)
   )
 df_q1
 ```
@@ -119,7 +120,7 @@ df_q1
 ## TASK: Estimate pi using your data from q1
 pi_est <- df_q1 %>% 
   summarise(
-    mean(stat) * 4
+    mean(stat)
   )
 pi_est
 ```
@@ -135,8 +136,8 @@ You now have an estimate of $\pi$, but how trustworthy is that estimate? In `e-s
 df_q3 <-
   df_q1 %>%
   summarize(
-    pi_mean = mean(stat) * 4,
-    pi_sd = sd(stat) * 4,
+    pi_mean = mean(stat),
+    pi_sd = sd(stat),
   ) %>%
   mutate(
    ci_lwr = pi_mean - 1.96 * pi_sd / sqrt(n),
@@ -153,7 +154,7 @@ df_q3
 - What confidence level did you choose?
   - 95%
 - Was your sample size $n$ large enough? Why do you say that?
-  - Yes, the sample size of 10,000 resulted in a confidence interval that included the value of $\pi$ at the 95% confidence level, and the mean value of `stat` was 3.13, which is fairly close to the actual value of $\pi$. While a larger sample size probably would have resulted in a more accurate value of `pi_mean`, the values obtained with the chosen sample size are very close to the actual value, suggesting that the sample size was sufficient.
+  - Yes, the mean value of 3.14 is very close to the actual value of pi. Additionally, the confidence interval is pretty small and provides a close estimate to pi that the decrease in the width caused by an increase in samples would not have made a significant difference.
 
 # References
 <!-- -------------------------------------------------- -->

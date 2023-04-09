@@ -192,6 +192,7 @@ set will estimate the probability of points landing in that area (see
 
 ``` r
 ## TASK: Choose a sample size and generate samples
+set.seed(101)
 n <- 10000 # Choose a sample size
 df_q1 <- 
   tibble(
@@ -199,24 +200,24 @@ df_q1 <-
     y = runif(n, min = 0, max = 1)
   ) %>% 
   mutate(
-    stat = (sqrt(1 - x^2) >= y),
+    stat = 4 * (x^2 + y^2 <= 1)
   )
 df_q1
 ```
 
     ## # A tibble: 10,000 × 3
-    ##        x     y stat 
-    ##    <dbl> <dbl> <lgl>
-    ##  1 0.558 0.419 TRUE 
-    ##  2 0.181 0.325 TRUE 
-    ##  3 0.608 0.319 TRUE 
-    ##  4 0.629 0.898 FALSE
-    ##  5 0.855 0.284 TRUE 
-    ##  6 0.351 0.252 TRUE 
-    ##  7 0.178 0.817 TRUE 
-    ##  8 0.708 0.176 TRUE 
-    ##  9 0.541 0.368 TRUE 
-    ## 10 0.206 0.704 TRUE 
+    ##         x     y  stat
+    ##     <dbl> <dbl> <dbl>
+    ##  1 0.372  0.842     4
+    ##  2 0.0438 0.559     4
+    ##  3 0.710  0.577     4
+    ##  4 0.658  0.607     4
+    ##  5 0.250  0.379     4
+    ##  6 0.300  0.801     4
+    ##  7 0.585  0.941     0
+    ##  8 0.333  0.524     4
+    ##  9 0.622  0.445     4
+    ## 10 0.546  0.976     0
     ## # … with 9,990 more rows
 
 ### **q2** Using your data in `df_q1`, estimate $\pi$.
@@ -225,15 +226,15 @@ df_q1
 ## TASK: Estimate pi using your data from q1
 pi_est <- df_q1 %>% 
   summarise(
-    mean(stat) * 4
+    mean(stat)
   )
 pi_est
 ```
 
     ## # A tibble: 1 × 1
-    ##   `mean(stat) * 4`
-    ##              <dbl>
-    ## 1             3.13
+    ##   `mean(stat)`
+    ##          <dbl>
+    ## 1         3.14
 
 # Quantifying Uncertainty
 
@@ -250,8 +251,8 @@ to assess your $\pi$ estimate.
 df_q3 <-
   df_q1 %>%
   summarize(
-    pi_mean = mean(stat) * 4,
-    pi_sd = sd(stat) * 4,
+    pi_mean = mean(stat),
+    pi_sd = sd(stat),
   ) %>%
   mutate(
    ci_lwr = pi_mean - 1.96 * pi_sd / sqrt(n),
@@ -264,7 +265,7 @@ df_q3
     ## # A tibble: 1 × 4
     ##   pi_mean pi_sd ci_lwr ci_upr
     ##     <dbl> <dbl>  <dbl>  <dbl>
-    ## 1    3.13  1.65   3.10   3.16
+    ## 1    3.14  1.64   3.11   3.17
 
 **Observations**:
 
@@ -273,13 +274,10 @@ df_q3
 - What confidence level did you choose?
   - 95%
 - Was your sample size $n$ large enough? Why do you say that?
-  - Yes, the sample size of 10,000 resulted in a confidence interval
-    that included the value of $\pi$ at the 95% confidence level, and
-    the mean value of `stat` was 3.13, which is fairly close to the
-    actual value of $\pi$. While a larger sample size probably would
-    have resulted in a more accurate value of `pi_mean`, the values
-    obtained with the chosen sample size are very close to the actual
-    value, suggesting that the sample size was sufficient.
+  - Yes, the mean value of 3.14 is very close to the actual value of pi.
+    Additionally, the confidence interval is pretty small and provides a
+    close estimate to pi that the decrease in the width caused by an
+    increase in samples would not have made a significant difference.
 
 # References
 
