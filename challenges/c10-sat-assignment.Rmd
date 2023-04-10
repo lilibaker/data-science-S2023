@@ -1,7 +1,7 @@
 ---
 title: "SAT and College Grades"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2023-04-10
 output:
   github_document:
     toc: true
@@ -57,9 +57,10 @@ All the deliverables stated in the rubrics above are due **at midnight** before 
 
 ```{r q1-task}
 ## TODO:
-df_sat <- NA
+df_sat <- read_excel("./data/sat.xls")
 
 ## TODO: Do your "first checks"
+glimpse(df_sat)
 ```
 
 **Observations**:
@@ -68,18 +69,18 @@ df_sat <- NA
 
 | Column     | Meaning |
 |------------|---------|
-| `high_GPA` | ???     |
-| `math_SAT` | ???     |
-| `verb_SAT` | ???     |
-| `comp_GPA` | ???     |
-| `univ_GPA` | ???     |
+| `high_GPA` | High school grade point average     |
+| `math_SAT` | Math SAT score    |
+| `verb_SAT` | Verbal SAT score    |
+| `comp_GPA` | Computer science grade point average    |
+| `univ_GPA` | Overall university grade point average    |
 
 - What information do we have about these students?
-  - (Your response here)
+  - Their high school and university gpas, as well as their sat scores.
 - What kinds of information *do we not have* about these students?
-  - (Your response here)
+  - The classes they are taking that result in their gpa; individual grading systems at the schools that affect the gpas relative to one another; and whether the students had sat prep courses.
 - Based on these missing variables, what possible effects could be present in the data that we would have *no way of detecting*?
-  - (Your response here)
+  - The factors could cause students with high SAT scores to exhibit lower GPAs as their classes may be harder or they may have had courses that focused on increasing SAT scores. Additionally, the GPAs may exhibit large differences if the students in certain classes are grader harsher than others.
 
 # Analysis with Hypothesis Testing
 <!-- ----------------------------------------------------------------------- -->
@@ -104,14 +105,18 @@ df_composite <-
 
 ```{r q2-task}
 ## TODO:
+df_composite %>% 
+  ggplot(aes(high_GPA, univ_GPA)) +
+  geom_point(aes(color = both_SAT)) +
+  scale_colour_gradientn(colours = terrain.colors(10))
 ```
 
 **Observations**:
 
 - What relationship do `univ_GPA` and `both_SAT` exhibit?
-  - (Your response here)
+  - As the university gpa increases, there tends to be an increase in the composite sat score. However, there is quite a bit of overlap in sat values in the 3.0-3.5 gpa range, which suggests that the relationship is more distinct at the extreme ends of the gpa spectrum.
 - What relationship do `univ_GPA` and `high_GPA` exhibit?
-  - (Your response here)
+  - Generally, as the high school gpa increases, so does the university gpa. However, there is also a significant portion of the data that exhibits a higher university gpa in the lower end of the high school gpa section.
 
 ### Hypothesis Testing with a Correlation Coefficient
 <!-- ------------------------- -->
@@ -131,16 +136,27 @@ The R function `cor.test` implements such a hypothesis test under the assumption
 ### __q3__ Plot histograms for `both_SAT, high_GPA, univ_GPA`. Which---if any---of the variables look approximately normally distributed.
 
 ```{r q3-task}
+df_composite %>% 
+  ggplot(aes(both_SAT)) +
+  geom_histogram()
+
+df_composite %>% 
+  ggplot(aes(high_GPA)) +
+  geom_histogram()
+
+df_composite %>% 
+  ggplot(aes(univ_GPA)) +
+  geom_histogram()
 ```
 
 **Observations**:
 
 - To what extent does `both_SAT` look like a normal distribution?
-  - (Your response here)
+  - There is a congregation of values around 1150, but given the large amount of data in the higher end, there doesn't appear to be a normal distribution.
 - To what extent does `high_GPA` look like a normal distribution?
-  - (Your response here)
+  - It does not look like a normal distribution -- there is a fairly wide spread distribution of the data and there are large spikes in concentration in various sections.
 - To what extent does `univ_GPA` look like a normal distribution?
-  - (Your response here)
+  - There seems to be a normal-like section of the graph from 3.0 up, but there is still a significant portion of the data in the lower section.
 
 Keep in mind your findings as you complete q4.
 
@@ -150,14 +166,17 @@ Keep in mind your findings as you complete q4.
 ## TODO: Use the function cor.test() to test the correlations between
 ##       high_GPA and univ_GPA, as well as between
 ##       both_SAT and univ_GPA
+
+cor.test(df_composite$high_GPA, df_composite$univ_GPA, mathod = "pearson")
+cor.test(df_composite$both_SAT, df_composite$univ_GPA, mathod = "pearson")
 ```
 
 **Observations**:
 
 - Which correlations are significantly nonzero?
-  - (Your response here)
+  - Both of the correlations are significantly nonzero as they are greater than 0.5.
 - Which of `high_GPA` and `both_SAT` seems to be more strongly correlated with `univ_GPA`?
-  - (Your response here)
+  - `high_GPA` as the correlation is greater than that of `both_SAT`.
 - How do the results here compare with the visual you created in q2?
   - (Your response here)
 - Based on these results, what can we say about the predictive capabilities of both `high_GPA` and `both_SAT` to predict `univ_GPA`?
