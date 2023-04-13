@@ -105,10 +105,11 @@ df_composite <-
 
 ```{r q2-task}
 ## TODO:
-df_composite %>% 
+df_composite %>%
   ggplot(aes(high_GPA, univ_GPA)) +
   geom_point(aes(color = both_SAT)) +
   scale_colour_gradientn(colours = terrain.colors(10))
+
 ```
 
 **Observations**:
@@ -178,9 +179,9 @@ cor.test(df_composite$both_SAT, df_composite$univ_GPA, mathod = "pearson")
 - Which of `high_GPA` and `both_SAT` seems to be more strongly correlated with `univ_GPA`?
   - `high_GPA` as the correlation is greater than that of `both_SAT`.
 - How do the results here compare with the visual you created in q2?
-  - (Your response here)
+  - The correlation between `high_GPA` and `univ_GPA` is seen in the visual in q2 as when `high_GPA` increases, `univ_GPA` also tended to increase. In terms of `high_GPA` and `both_SAT`, the weaker correlation is evident in the wide range of SAT values at a given GPA, as well as with the fact that when the GPA increased, the SAT did not necessarily increase, and vice versa.
 - Based on these results, what can we say about the predictive capabilities of both `high_GPA` and `both_SAT` to predict `univ_GPA`?
-  - (Your response here)
+  - Since the correlation between `high_GPA` and `univ_GPA` is higher than that of `both_SAT` and `univ_GPA`, it can be concluded that `high_GPA` has much higher predictive capabilities in the prediction of `univ_GPA`.
 
 Finally, let's use the bootstrap to perform the same test using *different* assumptions.
 
