@@ -256,7 +256,17 @@ pr_threshold <- 0.5
 ## TODO: compute true positive rate (TPR) and false positive rate (FPR) with the
 ##       given pr_threshold. Assign these to the columns TPR and FPR.
 df_q1 <-
-  df_basic
+  df_basic %>% 
+  mutate(
+    true_positive = (pr_heart_disease > pr_threshold) & heart_disease,
+    false_positive = (pr_heart_disease > pr_threshold) & !heart_disease,
+    true_negative = (pr_heart_disease <= pr_threshold) & !heart_disease,
+    false_negative = (pr_heart_disease <= pr_threshold) & heart_disease
+  ) %>% 
+  summarize(
+    TPR = sum(true_positive) / ((sum(true_positive)) + (sum(false_negative))),
+    FPR = sum(false_positive) / ((sum(true_negative)) + (sum(false_positive)))
+  )
 
 df_q1
 ```
