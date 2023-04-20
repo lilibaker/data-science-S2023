@@ -168,8 +168,8 @@ Keep in mind your findings as you complete q4.
 ##       high_GPA and univ_GPA, as well as between
 ##       both_SAT and univ_GPA
 
-cor.test(df_composite$high_GPA, df_composite$univ_GPA, mathod = "pearson")
-cor.test(df_composite$both_SAT, df_composite$univ_GPA, mathod = "pearson")
+cor.test(df_composite$high_GPA, df_composite$univ_GPA, method = "pearson")
+cor.test(df_composite$both_SAT, df_composite$univ_GPA, method = "pearson")
 ```
 
 **Observations**:
@@ -189,14 +189,27 @@ Finally, let's use the bootstrap to perform the same test using *different* assu
 
 ```{r q5-task}
 ## TODO: Use the bootstrap to compute a confidence interval for corr[high_GPA, univ_GPA]
+set.seed(101)
+df_q5 <-
+  df_composite %>%
+    bootstraps(times = 10000) %>%
+    mutate(
+      estimates = map(
+        splits,
+        ~ analysis(.x) 
+      )
+    ) %>%
+    unnest(estimates)
+    
+cor.test(df_q5$high_GPA, df_q5$univ_GPA, method = "pearson")
 ```
 
 **Observations**:
 
 - How does your estimate from q5 compare with your estimate from q4?
-  - (Your response here)
+  - The estimate is pretty similar to q4, with the correlation being just slight greater.
 - How does your CI from q5 compare with your CI from q4?
-  - (Your response here)
+  - The confidence interval is much smaller than that of q4.
 
 *Aside*: When you use two different approximations to compute the same quantity and get similar results, that's an *encouraging sign*. Such an outcome lends a bit more credibility to the results.
 
@@ -245,7 +258,8 @@ In this case, we're testing for whether $X$ has a significant effect on $Y$. Let
 
 ```{r q6-task}
 ## TODO: Fit a model of univ_GPA on the predictor both_SAT
-fit_basic <- NA
+fit_basic <- df_composite %>% 
+  lm(formula = univ_GPA ~ both_SAT)
 
 ## NOTE: The following computes confidence intervals on regression coefficients
 fit_basic %>%
@@ -258,9 +272,9 @@ fit_basic %>%
 **Observations**:
 
 - What is the confidence interval on the coefficient of `both_SAT`? Is this coefficient significantly different from zero?
-  - (Your response here)
+  - The confidence interval is between about 0.00198 and 0.00349, which is significantly different from zero as the entire interval is greater than zero.
 - By itself, how well does `both_SAT` predict `univ_GPA`?
-  - (Your response here)
+  - Not very well as while the coefficient and its confidence interval are greater than zero, they are still pretty close to zero, demonstrating that `both_SAT` does not have a strong effect in `univ_GPA`.
 
 Remember from `e-model03-interp-warnings` that there are challenges with interpreting regression coefficients! Let's investigate that idea further.
 
@@ -268,16 +282,35 @@ Remember from `e-model03-interp-warnings` that there are challenges with interpr
 
 ```{r q7-task}
 ## TODO: Fit and assess models with predictors both_SAT + high_GPA, and high_GPA alone
+fit_both <- df_composite %>% 
+  lm(formula = univ_GPA ~ both_SAT + high_GPA)
+
+## NOTE: The following computes confidence intervals on regression coefficients
+fit_both %>%
+  tidy(
+    conf.int = TRUE,
+    conf.level = 0.99
+  )
+
+fit_high <- df_composite %>% 
+  lm(formula = univ_GPA ~ high_GPA)
+
+## NOTE: The following computes confidence intervals on regression coefficients
+fit_high %>%
+  tidy(
+    conf.int = TRUE,
+    conf.level = 0.99
+  )
 ```
 
 **Observations**:
 
 - How well do these models perform, compared to the one you built in q6?
-  - (Your response here)
+  - They perform better as the coefficients are much greater.
 - What is the confidence interval on the coefficient of `both_SAT` when including `high_GPA` as a predictor?? Is this coefficient significantly different from zero?
-  - (Your response here)
+  - The confidence interval is about -0.00022 to 0.0018, which is not significantly different from zero as it includes zero.
 - How do the hypothesis test results compare with the results in q6?
-  - (Your response here)
+  - From the coefficients and the confidence intervals, it is evident that `high_GPA` has a greater effect in `univ_GPA` than `both_SAT`.
 
 ## Synthesize
 <!-- ------------------------- -->
@@ -289,9 +322,9 @@ Before closing, let's synthesize a bit from the analyses above.
 **Observations**:
 
 - Between `both_SAT` and `high_GPA`, which single variable would you choose to predict `univ_GPA`? Why?
-  - (Your response here)
+  - `high_GPA` as it has been shown to have a greater correlation and the linear model demonstrated that the `high_GPA` had a much greater effect on the `univ_GPA`.
 - Is `both_SAT` an effective predictor of `univ_GPA`? What specific pieces of evidence do you have in favor of `both_SAT` being effective? What specific pieces of evidence do you have against?
-  - (Your response here)
+  - No, `both_SAT` is not an effective predictor. While `both_SAT` and `univ_GPA` exhibited a positive correlation, the results of the linear model demonstrate that the effect of `both_SAT` on `univ_GPA` are not as strong as those of `high_GPA`.
 
 # End Notes
 <!-- ----------------------------------------------------------------------- -->
