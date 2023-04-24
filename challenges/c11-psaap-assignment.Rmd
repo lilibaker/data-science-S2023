@@ -1,7 +1,7 @@
 ---
 title: "Regression Case Study: PSAAP II"
-author: "(Your name here)"
-date: 2020-
+author: "Lili Baker"
+date: 2023-04-20
 output:
   github_document:
     toc: true
@@ -71,6 +71,7 @@ Figure 1. An example simulation, frozen at a specific point in time. An initial 
 
 ```{r q1-task}
 ## TODO: Perform your initial checks
+glimpse(df_psaap)
 ```
 
 **Observations**:
