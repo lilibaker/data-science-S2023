@@ -117,8 +117,9 @@ The primary output of interest is `T_norm = (avg_T - T_f) / T_f`, the normalized
 df_psaap %>% 
   ggplot(aes(T_norm)) +
   geom_boxplot() +
-  facet_wrap(~ x) +
+  facet_grid(~ x) +
   theme(axis.text.y=element_blank()) +
+  coord_flip() +
   ggtitle("T_norm vs channel location for every simulation")
 
 ```
@@ -361,6 +362,29 @@ df_validate %>%
     n = n(),
     pct = n / nrow(df_validate)
   )
+
+
+df_design_lam_f <- tibble(x = 1, L = 0.2, W = 0.04, U_0 = 1.0, lam_f = 0.03)
+fit_q6_lam_f <- 
+  df_train %>% 
+  lm(formula = T_norm ~ x + L + W + U_0 + lam_f)
+
+df_q6_lam_f <-
+  df_design_lam_f %>%
+  add_uncertainties(fit_q6_lam_f, interval = "prediction", prefix = "pi", level = pr_level)
+
+df_q6
+
+df_validate %>% 
+  add_uncertainties(fit_q6_lam_f, interval = "prediction", prefix = "pi", level = pr_level) %>% 
+  mutate(
+    in_range = (pi_lwr <= T_norm) & (T_norm <= pi_upr)
+  ) %>% 
+  group_by(in_range) %>% 
+  summarize(
+    n = n(),
+    pct = n / nrow(df_validate)
+  )
 ```
 
 **Recommendation**:
@@ -374,7 +398,7 @@ df_validate %>%
 - What interval for `T_norm` would you recommend the design team to plan around?
   - 1.456 to 2.296
 - Are there any other recommendations you would provide?
-  - Fixing `lam_f` decreases the percent of values within the range, so I would not fix that value.
+  - Fixing `lam_f` decreases the percent of values within the range (81.7% compared to the previous model's value of 93.3%), so I would not fix that value.
 
 *Bonus*: One way you could take this analysis further is to recommend which other variables the design team should tightly control. You could do this by fixing values in `df_design` and adding them to the model. An exercise you could carry out would be to systematically test the variables to see which ones the design team should more tightly control.
 

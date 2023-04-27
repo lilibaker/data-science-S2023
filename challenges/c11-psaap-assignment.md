@@ -257,8 +257,9 @@ of fluid, for different experimental settings (e.g. different dimensions
 df_psaap %>% 
   ggplot(aes(T_norm)) +
   geom_boxplot() +
-  facet_wrap(~ x) +
+  facet_grid(~ x) +
   theme(axis.text.y=element_blank()) +
+  coord_flip() +
   ggtitle("T_norm vs channel location for every simulation")
 ```
 
@@ -624,6 +625,43 @@ df_validate %>%
     ## 1 FALSE        4 0.0667
     ## 2 TRUE        56 0.933
 
+``` r
+df_design_lam_f <- tibble(x = 1, L = 0.2, W = 0.04, U_0 = 1.0, lam_f = 0.03)
+fit_q6_lam_f <- 
+  df_train %>% 
+  lm(formula = T_norm ~ x + L + W + U_0 + lam_f)
+
+df_q6_lam_f <-
+  df_design_lam_f %>%
+  add_uncertainties(fit_q6_lam_f, interval = "prediction", prefix = "pi", level = pr_level)
+
+df_q6
+```
+
+    ## # A tibble: 1 × 7
+    ##       x     L     W   U_0 pi_fit pi_lwr pi_upr
+    ##   <dbl> <dbl> <dbl> <dbl>  <dbl>  <dbl>  <dbl>
+    ## 1     1   0.2  0.04     1   1.88   1.46   2.30
+
+``` r
+df_validate %>% 
+  add_uncertainties(fit_q6_lam_f, interval = "prediction", prefix = "pi", level = pr_level) %>% 
+  mutate(
+    in_range = (pi_lwr <= T_norm) & (T_norm <= pi_upr)
+  ) %>% 
+  group_by(in_range) %>% 
+  summarize(
+    n = n(),
+    pct = n / nrow(df_validate)
+  )
+```
+
+    ## # A tibble: 2 × 3
+    ##   in_range     n   pct
+    ##   <lgl>    <int> <dbl>
+    ## 1 FALSE       11 0.183
+    ## 2 TRUE        49 0.817
+
 **Recommendation**:
 
 - How much do you trust your model? Why?
@@ -639,8 +677,9 @@ df_validate %>%
   around?
   - 1.456 to 2.296
 - Are there any other recommendations you would provide?
-  - Fixing `lam_f` decreases the percent of values within the range, so
-    I would not fix that value.
+  - Fixing `lam_f` decreases the percent of values within the range
+    (81.7% compared to the previous model’s value of 93.3%), so I would
+    not fix that value.
 
 *Bonus*: One way you could take this analysis further is to recommend
 which other variables the design team should tightly control. You could
