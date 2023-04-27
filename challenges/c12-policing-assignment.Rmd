@@ -154,11 +154,35 @@ arrests <- df_data %>%
   )
 
 
-arrests
+arrests %>% 
+  glimpse()
 
-cor.test(df_q5$high_GPA, df_q5$univ_GPA, method = "pearson")
+# cor.test(df_q5$high_GPA, df_q5$univ_GPA, method = "pearson")
 ```
-
+```{r q5-task-2}
+## TODO: Determine the factor levels for subject_race and raw_Race
+df_data %>% 
+  # group_by(subject_race) %>% 
+  ggplot(aes(subject_race)) +
+  geom_bar() +
+  facet_wrap(~ arrest_made) + 
+  scale_y_log10() + 
+  theme(
+    axis.text.x = element_text(size = 6, angle = 45, vjust = 1, hjust=1)
+  )
+```
+```{r q5-task-3}
+## TODO: Determine the factor levels for subject_race and raw_Race
+num_rows <- nrow(df_data)
+df_data %>% 
+  group_by(subject_age) %>%
+  ggplot(aes(subject_age, n(arrest_made))) +
+  geom_point() +
+  scale_y_log10() + 
+  theme(
+    axis.text.x = element_text(size = 6, angle = 45, vjust = 1, hjust=1)
+  )
+```
 **Observations**:
 
 - How does `arrest_rate` tend to vary with `subject_age`?
