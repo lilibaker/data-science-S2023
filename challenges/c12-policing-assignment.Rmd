@@ -73,10 +73,13 @@ Let's try to distinguish between these two possibilities.
 ```{r q3-task}
 ## TODO: Determine the factor levels for subject_race and raw_Race
 df_data %>% 
-  distinct(subject_race)
+  pull(subject_race) %>% 
+  levels()
 
 df_data %>% 
-  distinct(raw_Race)
+  pull(raw_Race) %>% 
+  as.factor() %>% 
+  levels()
 ```
 
 **Observations**:
@@ -145,52 +148,48 @@ which is most plausible, based on your results?
 
 (Note: Create as many chunks and visuals as you need)
 ```{r q5-task}
-## TODO: Determine the factor levels for subject_race and raw_Race
-arrests <- df_data %>% 
-  group_by(arrest_made) %>% 
+df_data %>% 
+  drop_na(subject_race) %>% 
+  group_by(subject_race) %>%
   summarize(
-    arrests = n(),
-    rate = arrests / nrow(df_data)
-  )
-
-
-arrests %>% 
-  glimpse()
-
-# cor.test(df_q5$high_GPA, df_q5$univ_GPA, method = "pearson")
+    num = n(),
+    arrest_count = sum(!is.na(arrest_made) & arrest_made == TRUE),
+    arrest_rate = arrest_count / num
+  ) %>% 
+  ggplot() +
+  geom_bar(aes(x = subject_race, y = arrest_rate), stat = "identity")
 ```
 ```{r q5-task-2}
-## TODO: Determine the factor levels for subject_race and raw_Race
 df_data %>% 
-  # group_by(subject_race) %>% 
-  ggplot(aes(subject_race)) +
-  geom_bar() +
-  facet_wrap(~ arrest_made) + 
-  scale_y_log10() + 
-  theme(
-    axis.text.x = element_text(size = 6, angle = 45, vjust = 1, hjust=1)
-  )
+  drop_na(subject_sex) %>% 
+  group_by(subject_sex) %>%
+  summarize(
+    num = n(),
+    arrest_count = sum(!is.na(arrest_made) & arrest_made == TRUE),
+    arrest_rate = arrest_count / num
+  ) %>% 
+  ggplot() +
+  geom_bar(aes(x = subject_sex, y = arrest_rate), stat = "identity")
 ```
 ```{r q5-task-3}
-## TODO: Determine the factor levels for subject_race and raw_Race
-num_rows <- nrow(df_data)
 df_data %>% 
   group_by(subject_age) %>%
-  ggplot(aes(subject_age, n(arrest_made))) +
-  geom_point() +
-  scale_y_log10() + 
-  theme(
-    axis.text.x = element_text(size = 6, angle = 45, vjust = 1, hjust=1)
-  )
+  summarize(
+    num = n(),
+    arrest_count = sum(!is.na(arrest_made) & arrest_made == TRUE),
+    arrest_rate = arrest_count / num
+  ) %>% 
+  ggplot(aes(subject_age, arrest_rate)) +
+  geom_point()
 ```
 **Observations**:
 
 - How does `arrest_rate` tend to vary with `subject_age`?
-  - (Your response here)
+  - Until the age of around 27, arrest rate increases as age increases. Afterwards, as age increases, the arrest rate decreases.
 - How does `arrest_rate` tend to vary with `subject_sex`?
-  - (Your response here)
+  - The arrest rate for males is much larger than that of females.
 - How does `arrest_rate` tend to vary with `subject_race`?
-  - (Your response here)
+  - Hispanic and black have the highest arrest_rate, followed by other, white, asian/pacific islander, and unknown.
 
 # Modeling
 <!-- -------------------------------------------------- -->
@@ -233,6 +232,19 @@ By default `glm` uses the first factor level present as the reference level. The
 ```{r q7-task}
 ## TODO: Re-fit the logistic regression, but set "white" as the reference
 ## level for subject_race
+fit_q7 <-
+  glm(
+    formula = arrest_made ~ subject_age + subject_race + subject_sex,
+    data = df_data %>%
+      filter(
+        !is.na(arrest_made),
+        subject_race %in% c("white", "black", "hispanic")
+      ) %>% 
+    mutate(
+      subject_race = fct_relevel(subject_race, "white")
+    ),
+    family = "binomial"
+  )
 
 fit_q7 %>% tidy()
 ```
@@ -240,11 +252,11 @@ fit_q7 %>% tidy()
 **Observations**:
 
 - Which `subject_race` level has the highest probability of being arrested, according to this model? Which has the lowest probability?
-  - (Your response here)
+  - Hispanic has the highest probability, while white has the lowest probability.
 - What could explain this difference in probabilities of arrest across race? List **multiple** possibilities.
-  - (Your response here)
+  - Racial profiling of the drivers by the police officers in general; increased likelihood of arrests in majority-minority communities; and increased likelihood of searches based on race.
 - Look at the sent of variables in the dataset; do any of the columns relate to a potential explanation you listed?
-  - (Your response here)
+  - contraband_found relates to the increased likelihood of searches as if police officers are more likely to search the vehicles of minority drivers, then that increase in the number of searches makes it more likely to find contraband than it does for white drivers who may not have their vehicles searched.
 
 One way we can explain differential arrest rates is to include some measure indicating the presence of an arrestable offense. We'll do this in a particular way in the next task.
 
@@ -253,21 +265,54 @@ One way we can explain differential arrest rates is to include some measure indi
 ```{r q8-task}
 ## TODO: Repeat the modeling above, but control for whether contraband was found
 ## during the police stop
+fit_q8 <-
+  glm(
+    formula = arrest_made ~ subject_age + subject_race + subject_sex + contraband_found,
+    data = df_data %>%
+      filter(
+        !is.na(arrest_made),
+        subject_race %in% c("white", "black", "hispanic")
+      ) %>% 
+    mutate(
+      subject_race = fct_relevel(subject_race, "white")
+    ),
+    family = "binomial"
+  )
+
 fit_q8 %>% tidy()
 ```
 
 **Observations**:
 
 - How does controlling for found contraband affect the `subject_race` terms in the model?
-  - (Your response here)
+  - Black drivers are less likely to be arrested compared to white drivers when contraband is present. Additionally, while hispanic drivers are still the most likely to be arrested, the likelihood has significantly decreased.
 - What does the *finding of contraband* tell us about the stop? What does it *not* tell us about the stop?
-  - (Your response here)
+  - When contraband is found, that means that a search was performed and the officer found contraband in the vehicle. However, it does not account for disparities in the rate of searches nor the thouroughness of searches across races.
 
 ### __q9__ Go deeper: Pose at least one more question about the data and fit at least one more model in support of answering that question.
+```{r q9-task}
+
+fit_q9 <-
+  glm(
+    formula = search_conducted ~ subject_age + subject_race + subject_sex,
+    data = df_data %>%
+      filter(
+        !is.na(arrest_made),
+        subject_race %in% c("white", "black", "hispanic")
+      ) %>% 
+    mutate(
+      subject_race = fct_relevel(subject_race, "white")
+    ),
+    family = "binomial"
+  )
+
+fit_q9 %>% tidy()
+```
 
 **Observations**:
 
-- Document your question and findings
+- How does the probability of a search being conducted differ across races?
+  - When looking at the likelihood of contraband being found, it is beneficial to contextualize these probabilities with the likelihood of searches being performed to begin with. It is evident that black and hispanic drivers are much more likely to have their vehicles searched, and male drivers are significantly more likely to have their vehicles searched. From this data, it is clear that the probabilities observed in the previous question regarding the likelihood of arrest based on contraband being found is affected by the fact that black and hispanic drivers are much more likely to have their vehicles searched to begin with.
 
 ## Further Reading
 <!-- -------------------------------------------------- -->
